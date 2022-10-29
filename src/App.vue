@@ -1,85 +1,83 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { defineComponent, ref } from 'vue'
+// import { RouterLink, RouterView } from 'vue-router'
+import Navigation from './components/Navigation.vue'
+import draggable from 'vuedraggable'
+defineComponent({
+  draggable,
+  Navigation
+})
+const items = ref([
+  {
+    id: 1,
+    parkingSpot: 1
+  },
+  {
+    id: 2,
+    parkingSpot: 2
+  },
+  {
+    id: 3,
+    parkingSpot: 3
+  }
+])
+
+const addItem = ref(() => {
+  items.value.push({id: items.value.length + 1, parkingSpot: items.value.length  + 1})
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <main class="root">
+    <Navigation/>
+    <draggable class="root__parking-space" v-model="items" item-key="id" :group="{pull: false, push: false}">
+      <template #item="{element}">
+        <div class="root__parking-spot">
+          <h2>{{element.parkingSpot}}</h2>
+        </div>
+      </template>
+      <template #footer>
+        <span @click="addItem">Add</span>
+      </template>
+    </draggable>
+  </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+
+body{
+  margin: 0;
+  padding: 0;
+  background: aliceblue;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: aliceblue;
+  color: #151515;
 }
 
-nav {
+.root{
+  border: 2px solid red;
   width: 100%;
-  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.root__parking-space{
+  border: 2px solid red;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   text-align: center;
-  margin-top: 2rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.root__parking-spot{
+  border: 2px solid blue;
+  height: 240px;
+  width: 17%;
 }
 </style>
