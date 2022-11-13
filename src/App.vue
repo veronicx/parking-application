@@ -1,11 +1,10 @@
 <script setup>
 import { defineComponent, ref } from 'vue'
-// import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import Navigation from './components/Navigation.vue'
-import draggable from 'vuedraggable'
 defineComponent({
-  draggable,
-  Navigation
+  Navigation,
+  RouterView
 })
 const items = ref([
   {
@@ -28,56 +27,22 @@ const addItem = ref(() => {
 </script>
 
 <template>
-  <main class="root">
+  <main class="bg-slate-50 text-slate-900">
     <Navigation/>
-    <draggable class="root__parking-space" v-model="items" item-key="id" :group="{pull: false, push: false}">
-      <template #item="{element}">
-        <div class="root__parking-spot">
-          <h2>{{element.parkingSpot}}</h2>
-        </div>
-      </template>
-      <template #footer>
-        <span @click="addItem">Add</span>
-      </template>
-    </draggable>
+    <RouterView />
   </main>
 </template>
 
 <style scoped>
-
-body{
-  margin: 0;
-  padding: 0;
-  background: aliceblue;
-}
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 *{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background: aliceblue;
-  color: #151515;
+  font-family: 'Roboto', sans-serif;
+  --tw-bg-opacity: 1;
+    background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
-
-.root{
-  border: 2px solid red;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-.root__parking-space{
-  border: 2px solid red;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  text-align: center;
-}
-
-.root__parking-spot{
-  border: 2px solid blue;
-  height: 240px;
-  width: 17%;
+body{
+  --tw-bg-opacity: 1;
+    background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
 </style>
