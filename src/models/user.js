@@ -1,7 +1,7 @@
 const userModel = { 
-        fullName: String,
-        email: String,
-        password: String,
+        fullName: '',
+        email: '',
+        password: '',
         dateOfBirth: Date,
 }
 
