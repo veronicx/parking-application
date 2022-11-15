@@ -42,5 +42,5 @@ const user = ref(userModel)
                 New to Parklace?
                 <router-link to="/auth/register" class="text-blue-500">Register</router-link>
             </span>
-        </form>
+</form>
 </template>
