@@ -21,9 +21,9 @@ const user = ref(userModel)
             <input v-model="user.email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
         </div>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
-            <font-awesome-icon icon="fa-solid fa-lock" class="h-4 w-4 text-slate-500 ml-4 pl-0" />
+            <font-awesome-icon icon="fa-solid fa-lock" class="h-4 w-4 text-slate-500 ml-2" />
             <input v-model="user.password" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
-            <font-awesome-icon :icon="passwordHidden ? 'fa-solid fa-eye-slash' : 'fa-slod fa-eye'" class="h-4 w-4 text-slate-500 relative" @click="passwordHidden = !passwordHidden" />
+            <font-awesome-icon :icon="passwordHidden ? 'fa-solid fa-eye-slash' : 'fa-slod fa-eye'" class="h-4 w-4 text-slate-500 ml-36 pl-2 absolute" @click="passwordHidden = !passwordHidden" />
         </div>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-calendar-week" class="h-4 w-4 text-slate-500 ml-2"    />
@@ -32,8 +32,8 @@ const user = ref(userModel)
         <div class="w-3/6 flex flex-row justify-end m-2">
             <span>
                 By signing up, you're agreeing to our 
-                <router-link to="/auth/forgot" class="text-blue-500">Terms & Conditions</router-link> and
-                <router-link to="/auth/privacy" class="text-blue-500">Privacy Policy</router-link>
+                <router-link to="/auth/policies" class="text-blue-500">Terms & Conditions</router-link> and
+                <router-link to="/auth/policies" class="text-blue-500">Privacy Policy</router-link>
             </span>
         </div>
         <div class="w-3/6 flex flex-col justify-center m-2">
@@ -55,9 +55,9 @@ const user = ref(userModel)
 </form>
 </template>
 <style scoped>
-input[type="date"]::-webkit-inner-spin-button,
+/* input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
-}
+} */
 </style>
