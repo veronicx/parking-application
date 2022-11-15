@@ -16,7 +16,7 @@ const userMail = ref(userModel)
             <font-awesome-icon icon="fa-solid fa-at" class="h-4 text-slate-500" />
             <input v-model="userMail.email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
         </div>
-        <div class="w-3/6 flex flex-col justify-center m-9">
+        <div class="w-3/6 flex flex-col justify-center m-8">
             <button class="bg-blue-500 text-slate-50 rounded-md h-10">Submit</button>
         </div>
     </form>
