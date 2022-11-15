@@ -10,24 +10,24 @@ const user = ref(userModel)
 
 <template>
     <form v-if="router.params.state === 'register'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
-        <img src="../../assets/Register/Dalle-Register.png" class="w-64 h-64" alt="">
+        <img src="../../assets/Auth/Dalle-Register.png" class="w-64 h-64" alt="">
         <p class="w-3/6 text-4xl pl-7 m-2">Register</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-signature" class="h-4 w-4 text-slate-500"   />
-            <input v-model="user.fullName" type="text" placeholder="Full Name..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <input v-model="user.fullName" type="text" placeholder="Full Name..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
         </div>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-at" class="h-4 w-4 text-slate-500" />
-            <input v-model="user.email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <input v-model="user.email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
         </div>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
-            <font-awesome-icon icon="fa-solid fa-lock" class="h-4 w-4 text-slate-500 ml-5 p-2" />
-            <input v-model="user.password" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <font-awesome-icon icon="fa-solid fa-lock" class="h-4 w-4 text-slate-500 ml-4 pl-0" />
+            <input v-model="user.password" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
             <font-awesome-icon :icon="passwordHidden ? 'fa-solid fa-eye-slash' : 'fa-slod fa-eye'" class="h-4 w-4 text-slate-500 relative" @click="passwordHidden = !passwordHidden" />
         </div>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-calendar-week" class="h-4 w-4 text-slate-500 ml-2"    />
-            <input v-model="user.dateOfBirth" type="date" placeholder="Birthday..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <input v-model="user.dateOfBirth" type="date" placeholder="Birthday..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
         </div>
         <div class="w-3/6 flex flex-row justify-end m-2">
             <span>

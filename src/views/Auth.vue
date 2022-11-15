@@ -1,15 +1,18 @@
 <script setup>
-
+import { ref } from 'vue'
 import { useRoute } from 'vue-router';
-const router = useRoute()
-
 import Login from '../components/Auth/Login.vue'
-import Register from '../components/Auth/Register.vue';
+import Register from '../components/Auth/Register.vue'
+import Forgot from '../components/Auth/Forgot.vue';
+
+
+const router = ref(useRoute())
 </script>
 
 <template>
     <div class="w-full flex flex-col justify-center items-center">
         <Login v-if="router.params.state === 'login'" />
         <Register v-if="router.params.state === 'register'" />
+        <Forgot v-if="router.params.state === 'forgot'" /> 
     </div>
 </template>
