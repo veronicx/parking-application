@@ -12,7 +12,7 @@ const user = ref(userModel)
 
 <template>
     <form v-if="router.params.state === 'login'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
-        <img src="../../assets/Login/dalle-generate-login.png" class="w-64 h-64" alt="">
+        <img src="../../assets/Auth/dalle-generate-login.png" class="w-64 h-64" alt="">
         <p class="w-3/6 text-4xl pl-7 m-2">Login</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-at" class="h-4 text-slate-500" />
@@ -42,5 +42,5 @@ const user = ref(userModel)
                 New to Parklace?
                 <router-link to="/auth/register" class="text-blue-500">Register</router-link>
             </span>
-        </form>
+</form>
 </template>
