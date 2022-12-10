@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import {onMounted, ref} from 'vue'
-import { UserModel, ThrowError } from '../../models/index'
+import { UserModel, ThrowFirebaseErrors, ThrowAuthErrors } from '../../models/index'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 const router = useRoute()
@@ -25,13 +25,14 @@ const register = () => {
         })
         .catch(error => {
             console.log('error on register', error.code, error.message)
-            errors.value = new ThrowError(error).message()
+            errors.value = new ThrowFirebaseErrors(error).message()
 
     })
 }
 
-const basicAuth = () => {
-
+const basicAuth = (fullName,email,password) => {
+    const dataSet = new ThrowAuthErrors(fullName, email, password)
+        dataSet.print()
     return false
  }
 </script>
@@ -65,7 +66,7 @@ const basicAuth = () => {
             </span>
         </div>
         <div class="w-3/6 flex flex-col justify-center m-2">
-            <button :disabled="basicAuth()" class="bg-blue-500 text-slate-50 disabled:bg-blue-300 rounded-md h-10" @click="register()">Register</button>
+            <button :disabled="basicAuth(fullName,email,password)" class="bg-blue-500 text-slate-50 disabled:bg-blue-300 rounded-md h-10" @click="register()">Register</button>
             <div class="w-full mt-4 mb-4 text-center">
                 <fieldset class="border-t border-slate-500">
                     <legend class="mx-auto px-4 text-slate-500">OR</legend>
