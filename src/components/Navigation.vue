@@ -7,15 +7,15 @@ const optionVal = ref('')
 
 const toggleDropdown = ref('hidden')
 
-// eslint-disable-next-line no-unused-vars
 watch(optionVal, (newVal, _oldVal) => {
-    router.push({ path: `auth/${newVal}`})
+        console.log(newVal)
+        if(newVal !== _oldVal) { router.push(newVal) }
 })
 </script>
 
 
 <template>
-    <nav class="flex flex-col justify-between items-center mb-8 p-8  sm:flex-row sm:h-16 shadow-md" @mouseleave="toggleDropdown = 'hidden'">
+    <nav class="flex flex-col cursor-pointer justify-between items-center mb-8 p-8  sm:flex-row sm:h-16 shadow-md" @mouseleave="toggleDropdown = 'hidden'">
        <div class="flex flex-col sm:flex-row items-center justify-between w-full sm:w-1/3">
         <span class="uppercase text-2xl flex flex-row justify-between w-full items-center sm:block sm:w-fit">
             Parklace
@@ -26,13 +26,13 @@ watch(optionVal, (newVal, _oldVal) => {
             </span>
         </span>
         <div :style="`display:${toggleDropdown}`" class="hidden w-full flex-col text-center m-4 justify-center h-28 sm:h-auto sm:flex sm:flex-row sm:justify-between md:w-fit">
-            <span class="m-4">
+            <span class="m-4" @click="router.push('/home')">
                 Home
             </span>
-            <span class="m-4">
+            <span class="m-4" @click="router.push('/about')">
                 About
             </span>
-            <span class="m-4">
+            <span class="m-4" @click="router.push('/services')">
                 Services
             </span>
        </div>
@@ -40,10 +40,10 @@ watch(optionVal, (newVal, _oldVal) => {
        <div :style="`display:${toggleDropdown}`" class="hidden mt-8 flex-row sm:flex sm:mt-0">
           <img class="w-8 h-8 border-2 absolute rounded-full  m-auto" src="../assets/avatar.png">
           <select v-model="optionVal" id="select" name="options" class="w-8 h-8 z-20 text-transparent rounded cursor-pointer bg-transparent outline-none appearance-none indent-0 overflow-hidden">
-                <option value="profile" class="text-slate-900">Profile</option>
-                <option value="settings" class="text-slate-900">Settings</option>
-                <option value="signout" class="text-slate-900">Sign Out</option>
-                <option value="login" class="text-slate-900">Login</option>
+                <option value="/auth/profile" class="text-slate-900">Profile</option>
+                <option value="/settings" class="text-slate-900">Settings</option>
+                <option value="/auth/signout" class="text-slate-900">Sign Out</option>
+                <option value="/auth/login" class="text-slate-900">Login</option>
             </select>
        </div>
     </nav>

@@ -1,35 +1,21 @@
 <script setup>
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
 import Navigation from './components/Navigation.vue'
+import Footer from './components/Footer.vue'
 defineComponent({
   Navigation,
+  Footer,
   RouterView
 })
-const items = ref([
-  {
-    id: 1,
-    parkingSpot: 1
-  },
-  {
-    id: 2,
-    parkingSpot: 2
-  },
-  {
-    id: 3,
-    parkingSpot: 3
-  }
-])
 
-const addItem = ref(() => {
-  items.value.push({id: items.value.length + 1, parkingSpot: items.value.length  + 1})
-})
 </script>
 
 <template>
   <main class="bg-slate-50 text-slate-900">
     <Navigation/>
     <RouterView />
+    <Footer />
   </main>
 </template>
 

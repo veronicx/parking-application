@@ -1,8 +1,13 @@
 <script setup>
 import { ref } from 'vue'
-import userModel from '../../models/user';
 
-const userMail = ref(userModel)
+import { UserModel } from '../../models/user'
+
+const fullName = ref('')
+const email = ref('')
+const password = ref('')
+
+const user = new UserModel(fullName,email,password)
 </script>
 
 <template>
@@ -14,7 +19,7 @@ const userMail = ref(userModel)
         </span>
         <div class="flex flex-row items-center m-8 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-at" class="h-4 text-slate-500" />
-            <input v-model="userMail.email" type="mail" placeholder="Email..." class="bg-slate-50 w-5/6 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <input v-model="user.email" type="mail" placeholder="Email..." class="bg-slate-50 w-5/6 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
         </div>
         <div class="w-3/6 flex flex-col justify-center m-8">
             <button class="bg-blue-500 text-slate-50 rounded-md h-10">Submit</button>

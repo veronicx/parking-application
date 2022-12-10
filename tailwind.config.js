@@ -967,5 +967,6 @@ module.exports = {
     'active',
     'disabled',
   ],
+  // eslint-disable-next-line no-undef
   plugins: [],
 }

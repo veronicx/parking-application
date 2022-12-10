@@ -1,17 +1,34 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router';
-import userModel from '../../models/user';
+import { UserModel } from '../../models/user'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+
 const router = useRoute()
 const passwordHidden = ref(true)
 
-const user = ref(userModel)
+
+const fullName = ref('')
+const email = ref('')
+const password = ref('')
+
+const user = new UserModel(fullName,email,password)
+
+
+const login = () => {
+    signInWithEmailAndPassword(getAuth(), user.value.email, user.value.password)
+        .then(response => {
+        console.log('user login session', response)
+        }).catch(error => {
+        console.log('error', error.message)
+    }) 
+}
 
 </script>
 
 
 <template>
-    <form v-if="router.params.state === 'login'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
+    <div v-if="router.params.state === 'login'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
         <img src="../../assets/Auth/dalle-generate-login.png" class="w-64 h-64" alt="">
         <p class="w-3/6 text-4xl pl-7 m-2">Login</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
@@ -27,7 +44,7 @@ const user = ref(userModel)
             <router-link to="/auth/forgot" class="text-blue-500">Forgot Password?</router-link>
         </div>
         <div class="w-3/6 flex flex-col justify-center m-2">
-            <button class="bg-blue-500 text-slate-50 rounded-md h-10">Login</button>
+            <button class="bg-blue-500 text-slate-50 rounded-md h-10" @click="login()">Login</button>
             <div class="w-full mt-4 mb-4 text-center">
                 <fieldset class="border-t border-slate-500">
                     <legend class="mx-auto px-4 text-slate-500">OR</legend>
@@ -42,5 +59,5 @@ const user = ref(userModel)
                 New to Parklace?
                 <router-link to="/auth/register" class="text-blue-500">Register</router-link>
             </span>
-</form>
+</div>
 </template>
