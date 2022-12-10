@@ -1,8 +1,11 @@
-const userModel = { 
-        fullName: '',
-        email: '',
-        password: '',
-        dateOfBirth: Date,
+
+class UserModel { 
+        constructor(fullName,email,password) {
+                
+                this.fullName = fullName
+                this.email = email
+                this.password = password
+        }
 }
 
-export default userModel
+export { UserModel }

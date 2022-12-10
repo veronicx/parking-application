@@ -24,6 +24,11 @@ const router = createRouter({
       path: '/auth/:state',
       name: 'auth',
       component: () => import('../views/Auth.vue')
+    },
+    {
+      path: '/user/:path', 
+      name: 'user',
+      component: () => import('../views/User.vue')
     }
   ]
 })
