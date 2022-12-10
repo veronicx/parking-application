@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import {onMounted, ref} from 'vue'
-import { UserModel } from '../../models/user'
+import { UserModel, ThrowError } from '../../models/index'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 const router = useRoute()
@@ -10,20 +10,13 @@ const passwordHidden = ref(true)
 const fullName = ref('')
 const email = ref('')
 const password = ref('')
+const errors = ref({})
 
 
-let errors = ref({
-    message: '',
-    field: 'as'
-})
-onMounted(() => { 
-    console.log('erorrs',errors.value.field)
-})
 const register = () => { 
     const user = new UserModel(fullName, email, password)
     createUserWithEmailAndPassword(getAuth(), user.email.value, user.password.value)
         .then(response => {
-            console.log('RESPONSE', response.user)
             updateProfile(response.user, {
                 displayName: user.fullName.value
             }).then(res => {
@@ -32,14 +25,15 @@ const register = () => {
         })
         .catch(error => {
             console.log('error on register', error.code, error.message)
-            if (error.code === 'auth/email-already-in-use') { 
-                errors.value = 
-                console.log(errors.value)
-            } else {
-                errors.value = ''
-            }
+            errors.value = new ThrowError(error).message()
+
     })
 }
+
+const basicAuth = () => {
+
+    return false
+ }
 </script>
 
 
@@ -49,19 +43,19 @@ const register = () => {
         <p class="w-3/6 text-4xl pl-7 m-2">Register</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-signature" class="h-4 w-4 text-slate-500"   />
-            <input v-model="fullName" type="text" placeholder="Full Name..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
+            <input v-model="fullName" minlength="3" maxlength="250" type="text" placeholder="Full Name..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
         </div>
-        <div :class="`flex flex-row items-center m-4 justify-center w-3/6 ${errors === 'email' ? 'border-b-2 border-red-500 rounded' : 'border-transparent'}`">
-            <font-awesome-icon icon="fa-solid fa-at" :class="`h-4 w-4 ${errors === 'email' ? 'text-red-500' : 'text-slate-500'}`" />
-            <input v-model="email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none  placeholder:text-slate-900">
+        <div :class="`flex flex-row items-center m-4 justify-center w-3/6 ${errors.field === 'email' ? 'border-b-2 border-red-500 rounded' : 'border-transparent'}`">
+            <font-awesome-icon icon="fa-solid fa-at" :class="`h-4 w-4 ${errors.field === 'email' ? 'text-red-500' : 'text-slate-500'}`" />
+            <input v-model="email" type="mail" minlength="3" maxlength="250" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none  placeholder:text-slate-900">
         </div>
-        <form class="flex flex-row items-center m-4 justify-center w-3/6">
-            <font-awesome-icon icon="fa-solid fa-lock" class="h-4 w-4 text-slate-500 ml-2" />
-            <input v-model="password" autocomplete="create-password" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
+        <form :class="`flex flex-row items-center m-4 justify-center w-3/6 ${errors.field === 'password' ? 'border-b-2 border-red-500 rounded' : 'border-transparent'}`">
+            <font-awesome-icon icon="fa-solid fa-lock" :class="`h-4 w-4 ${errors.field === 'password' ? 'text-red-500' : 'text-slate-500'}`" />
+            <input v-model="password" autocomplete="create-password" minlength="6" maxlength="64" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
             <font-awesome-icon :icon="passwordHidden ? 'fa-solid fa-eye-slash' : 'fa-slod fa-eye'" class="h-4 w-4 text-slate-500 ml-36 pl-2 absolute" @click="passwordHidden = !passwordHidden" />
         </form>
         <div v-if="errors">
-            <span v-if="errors" class="text-red-500">{{errors}}</span>
+            <span v-if="errors && errors.message" class="text-red-500">{{errors.message}}</span>
         </div>
         <div class="w-3/6 flex flex-row justify-end m-2">
             <span>
@@ -71,7 +65,7 @@ const register = () => {
             </span>
         </div>
         <div class="w-3/6 flex flex-col justify-center m-2">
-            <button class="bg-blue-500 text-slate-50 rounded-md h-10" @click="register()">Register</button>
+            <button :disabled="basicAuth()" class="bg-blue-500 text-slate-50 disabled:bg-blue-300 rounded-md h-10" @click="register()">Register</button>
             <div class="w-full mt-4 mb-4 text-center">
                 <fieldset class="border-t border-slate-500">
                     <legend class="mx-auto px-4 text-slate-500">OR</legend>
@@ -86,5 +80,5 @@ const register = () => {
                 Already Registered?
                 <router-link to="/auth/login" class="text-blue-500">Login</router-link>
             </span>
-</div>
+    </div>
 </template>

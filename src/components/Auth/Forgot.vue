@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-import { UserModel } from '../../models/user'
+import { UserModel } from '../../models/index.js'
 
 const fullName = ref('')
 const email = ref('')
