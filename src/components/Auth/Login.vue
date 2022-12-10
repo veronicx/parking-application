@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router';
-import { UserModel } from '../../models/user'
+import { UserModel } from '../../models/index.js'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
 const router = useRoute()
