@@ -1,62 +1,76 @@
 <script setup>
 import { useRoute } from 'vue-router';
-import {onMounted, ref} from 'vue'
-import { UserModel, ThrowFirebaseErrors, ThrowAuthErrors } from '../../models/index'
+import {ref, watch} from 'vue'
+import {ThrowFirebaseErrors, ThrowAuthErrors } from '../../models/index'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 const router = useRoute()
 const passwordHidden = ref(true)
 
-const fullName = ref('')
-const email = ref('')
-const password = ref('')
-const errors = ref({})
 
+
+const errors = ref([])
+
+const user = ref({
+    fullName: '',
+    email: '',
+    password: ''
+})
 
 const register = () => { 
-    const user = new UserModel(fullName, email, password)
-    createUserWithEmailAndPassword(getAuth(), user.email.value, user.password.value)
+    createUserWithEmailAndPassword(getAuth(), user.value.email, user.value.password)
         .then(response => {
             updateProfile(response.user, {
-                displayName: user.fullName.value
+                displayName: user.value.fullName
             }).then(res => {
                 console.log('response update', res)
             })
         })
         .catch(error => {
-            console.log('error on register', error.code, error.message)
-            errors.value = new ThrowFirebaseErrors(error).message()
+            const fireBaseError = new ThrowFirebaseErrors(error).message()
+            errors.value.push(fireBaseError)
 
     })
 }
 
-const basicAuth = (fullName,email,password) => {
-    const dataSet = new ThrowAuthErrors(fullName, email, password)
-        dataSet.print()
-    return false
- }
+
+const checkData = (fullName,email,password) => { 
+    const currentErrors = new ThrowAuthErrors(fullName, email,password).throwWarnings()
+    errors.value = currentErrors
+}
+
+watch(user.value, (currentValue) => {
+    checkData(currentValue.fullName, currentValue.email,currentValue.password)
+})
+
 </script>
 
 
 <template>
     <div v-if="router.params.state === 'register'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
         <img src="../../assets/Auth/Dalle-Register.png" class="w-64 h-64" alt="">
+            {{errors}}
+             {{user}}
+        <button @click="logMe()">LOG ME</button>
         <p class="w-3/6 text-4xl pl-7 m-2">Register</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-signature" class="h-4 w-4 text-slate-500"   />
-            <input v-model="fullName" minlength="3" maxlength="250" type="text" placeholder="Full Name..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
+            <input v-model="user.fullName" minlength="3" maxlength="250" type="text" placeholder="Name..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
         </div>
-        <div :class="`flex flex-row items-center m-4 justify-center w-3/6 ${errors.field === 'email' ? 'border-b-2 border-red-500 rounded' : 'border-transparent'}`">
-            <font-awesome-icon icon="fa-solid fa-at" :class="`h-4 w-4 ${errors.field === 'email' ? 'text-red-500' : 'text-slate-500'}`" />
-            <input v-model="email" type="mail" minlength="3" maxlength="250" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none  placeholder:text-slate-900">
+        <div :class="`flex flex-row items-center m-4 justify-center w-3/6 ${errors.find(item => item.field === 'email')? 'border-b-2 border-red-500 rounded' : 'border-transparent'}`">
+            <font-awesome-icon icon="fa-solid fa-at" :class="`h-4 w-4 ${errors.find(item => item.field === 'email') ? 'text-red-500' : 'text-slate-500'}`" />
+            <input v-model="user.email" type="mail" minlength="3" maxlength="250" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none  placeholder:text-slate-900">
         </div>
         <form :class="`flex flex-row items-center m-4 justify-center w-3/6 ${errors.field === 'password' ? 'border-b-2 border-red-500 rounded' : 'border-transparent'}`">
             <font-awesome-icon icon="fa-solid fa-lock" :class="`h-4 w-4 ${errors.field === 'password' ? 'text-red-500' : 'text-slate-500'}`" />
-            <input v-model="password" autocomplete="create-password" minlength="6" maxlength="64" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
+            <input v-model="user.password" autocomplete="create-password" minlength="6" maxlength="32" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded  outline-none placeholder:text-slate-900">
             <font-awesome-icon :icon="passwordHidden ? 'fa-solid fa-eye-slash' : 'fa-slod fa-eye'" class="h-4 w-4 text-slate-500 ml-36 pl-2 absolute" @click="passwordHidden = !passwordHidden" />
         </form>
         <div v-if="errors">
-            <span v-if="errors && errors.message" class="text-red-500">{{errors.message}}</span>
+            <div v-for="error in errors" :key="error.field">
+                <span v-if="error && error.message" class="text-red-500">{{error.message}}</span>
+            </div>
+        
         </div>
         <div class="w-3/6 flex flex-row justify-end m-2">
             <span>
@@ -66,7 +80,7 @@ const basicAuth = (fullName,email,password) => {
             </span>
         </div>
         <div class="w-3/6 flex flex-col justify-center m-2">
-            <button :disabled="basicAuth(fullName,email,password)" class="bg-blue-500 text-slate-50 disabled:bg-blue-300 rounded-md h-10" @click="register()">Register</button>
+            <button :disabled="errors && errors.length > 0" class="bg-blue-500 text-slate-50 disabled:bg-blue-300 rounded-md h-10" @click="register()">Register</button>
             <div class="w-full mt-4 mb-4 text-center">
                 <fieldset class="border-t border-slate-500">
                     <legend class="mx-auto px-4 text-slate-500">OR</legend>
