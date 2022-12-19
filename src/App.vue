@@ -1,12 +1,20 @@
 <script setup>
-import { defineComponent } from 'vue'
 import { RouterView } from 'vue-router'
 import Navigation from './components/Navigation.vue'
 import Footer from './components/Footer.vue'
-defineComponent({
-  Navigation,
-  Footer,
-  RouterView
+
+import { getAuth, onAuthStateChanged,} from 'firebase/auth'
+import { onMounted, ref } from 'vue'
+
+const isLoggedIn = ref(false)
+onMounted(() => { 
+  onAuthStateChanged(getAuth(), (user) => { 
+    if (user) {
+      isLoggedIn.value = true
+    } else { 
+      isLoggedIn.value = false
+    }
+  })
 })
 
 </script>

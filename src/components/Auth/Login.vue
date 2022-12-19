@@ -1,24 +1,23 @@
 <script setup>
 import { ref } from 'vue'
-import { useRoute } from 'vue-router';
-import { UserModel } from '../../models/index.js'
+import { useRouter} from 'vue-router';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-
-const router = useRoute()
+const router = useRouter()
 const passwordHidden = ref(true)
-
-
 const fullName = ref('')
 const email = ref('')
 const password = ref('')
 
-const user = new UserModel(fullName,email,password)
-
-
 const login = () => {
-    signInWithEmailAndPassword(getAuth(), user.value.email, user.value.password)
+    signInWithEmailAndPassword(getAuth(), email.value, password.value)
         .then(response => {
-        console.log('user login session', response)
+            const previousRoute = localStorage.getItem('PREV_ROUTE')
+            if (response && response.user && previousRoute) {
+                console.log('what is true', previousRoute,response)
+                router.push(previousRoute)
+            } else {  
+                router.push('/')
+            }
         }).catch(error => {
         console.log('error', error.message)
     }) 
@@ -28,16 +27,16 @@ const login = () => {
 
 
 <template>
-    <div v-if="router.params.state === 'login'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
+    <div class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
         <img src="../../assets/Auth/dalle-generate-login.png" class="w-64 h-64" alt="">
         <p class="w-3/6 text-4xl pl-7 m-2">Login</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-at" class="h-4 text-slate-500" />
-            <input v-model="user.email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <input v-model="email" type="mail" placeholder="Email..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
         </div>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-lock" class="h-4 text-slate-500 ml-5" />
-            <input v-model="user.password" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
+            <input v-model="password" :type="passwordHidden ? 'password' : 'text'" placeholder="password..." class="bg-slate-50 w-3/4 ml-2 rounded hover:border-b-2 hover:border-slate-500 outline-none placeholder:text-slate-900">
             <font-awesome-icon :icon="passwordHidden ? 'fa-solid fa-eye-slash' : 'fa-slod fa-eye'" class="h-4 text-slate-500 relative" @click="passwordHidden = !passwordHidden" />
         </div>
         <div class="w-3/6 flex flex-row justify-end m-2">

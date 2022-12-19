@@ -49,9 +49,6 @@ watch(user.value, (currentValue) => {
 <template>
     <div v-if="router.params.state === 'register'" class="h-fit w-2/4 shadow-lg flex flex-col items-center mb-6">
         <img src="../../assets/Auth/Dalle-Register.png" class="w-64 h-64" alt="">
-            {{errors}}
-             {{user}}
-        <button @click="logMe()">LOG ME</button>
         <p class="w-3/6 text-4xl pl-7 m-2">Register</p>
         <div class="flex flex-row items-center m-4 justify-center w-3/6">
             <font-awesome-icon icon="fa-solid fa-signature" class="h-4 w-4 text-slate-500"   />
