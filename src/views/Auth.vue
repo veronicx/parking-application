@@ -6,7 +6,6 @@ import Register from '../components/Auth/Register.vue'
 import Forgot from '../components/Auth/Forgot.vue';
 import Policies from '../components/Auth/Policies.vue';
 
-
 const router = ref(useRoute())
 </script>
 

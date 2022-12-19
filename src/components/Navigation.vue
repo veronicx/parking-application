@@ -1,14 +1,24 @@
 <script setup>
 import { ref,watch, } from 'vue'
 import { useRouter } from 'vue-router';
+import {  signOut, getAuth } from 'firebase/auth'
 
 const router = useRouter()
 const optionVal = ref('')
 
 const toggleDropdown = ref('hidden')
 
+const handleSignOut = () => {  
+    signOut(getAuth()).then(() => { 
+        router.push("/")
+    })
+}
+
 watch(optionVal, (newVal, _oldVal) => {
-        console.log(newVal)
+    if (newVal === '/auth/signout') { 
+        handleSignOut() 
+        
+    }
         if(newVal !== _oldVal) { router.push(newVal) }
 })
 </script>
@@ -40,7 +50,7 @@ watch(optionVal, (newVal, _oldVal) => {
        <div :style="`display:${toggleDropdown}`" class="hidden mt-8 flex-row sm:flex sm:mt-0">
           <img class="w-8 h-8 border-2 absolute rounded-full  m-auto" src="../assets/avatar.png">
           <select v-model="optionVal" id="select" name="options" class="w-8 h-8 z-20 text-transparent rounded cursor-pointer bg-transparent outline-none appearance-none indent-0 overflow-hidden">
-                <option value="/auth/profile" class="text-slate-900">Profile</option>
+                <option value="/profile" class="text-slate-900">Profile</option>
                 <option value="/settings" class="text-slate-900">Settings</option>
                 <option value="/auth/signout" class="text-slate-900">Sign Out</option>
                 <option value="/auth/login" class="text-slate-900">Login</option>
