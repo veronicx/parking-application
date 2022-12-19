@@ -2,7 +2,6 @@
 import { RouterView } from 'vue-router'
 import Navigation from './components/Navigation.vue'
 import Footer from './components/Footer.vue'
-
 import { getAuth, onAuthStateChanged,} from 'firebase/auth'
 import { onMounted, ref } from 'vue'
 
@@ -10,6 +9,7 @@ const isLoggedIn = ref(false)
 onMounted(() => { 
   onAuthStateChanged(getAuth(), (user) => { 
     if (user) {
+      console.log('user',user)
       isLoggedIn.value = true
     } else { 
       isLoggedIn.value = false
