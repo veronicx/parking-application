@@ -56,6 +56,7 @@ defineProps({
             <span v-if="auth.uid" class="m-4" @click="router.push('/spaces')">
                 Spaces
             </span>
+            <span class="m-4" @click="router.push('/explore')">Explore</span> 
        </div>
        </div>
        <div :style="`display:${toggleDropdown}`" class="hidden mt-8 flex-row sm:flex sm:mt-0">

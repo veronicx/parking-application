@@ -1,9 +1,14 @@
-import { ref,} from 'vue'
 import { defineStore } from 'pinia'
+import {ref} from 'vue'
 
-export const useUserStore = defineStore('counter', () => {
- 
-  const loggedState = ref(false)
-  const user = ref({})
-  return { loggedState, user }
+export const listingStore = defineStore('listing', () => {
+
+  const listing = ref([])
+
+ const updateList = (newVal) => { 
+      listing.value = newVal
+  }
+  
+  return { listing, updateList}
+  
 })
