@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+// import VueSocketIO from 'vue-socket.io'
 import App from './App.vue'
 import router from './router'
 import './assets/tailwind.css'
@@ -24,8 +25,13 @@ initializeApp(firebaseConfig);
 
 library.add(fas)
 
+
+
 const app = createApp(App)
 
+// app.use(new VueSocketIO({
+//   connection: 'ws://localhost:8080'
+// }))
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 // GOOGLE MAPS
