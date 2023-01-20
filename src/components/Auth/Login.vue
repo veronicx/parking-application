@@ -13,7 +13,6 @@ const login = () => {
         .then(response => {
             const previousRoute = localStorage.getItem('PREV_ROUTE')
             if (response && response.user && previousRoute) {
-                console.log('what is true', previousRoute,response)
                 router.push(previousRoute)
             } else {  
                 router.push('/')

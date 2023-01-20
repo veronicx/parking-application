@@ -10,7 +10,6 @@ const auth = ref({})
 onMounted(() => { 
   onAuthStateChanged(getAuth(), (user) => { 
     if (user) {
-      console.log('user', user)
       auth.value = user
     } else { 
       auth.value = {}

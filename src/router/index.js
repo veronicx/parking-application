@@ -10,6 +10,11 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
+    { 
+      path: '/explore', 
+      name: 'Explore',
+      component: () => import('../views/Listing.vue')
+    },
     {
       path: '/auth/:state',
       name: 'auth',
@@ -27,27 +32,33 @@ const router = createRouter({
       path: '/spaces',
       name: 'spaces',
       component: () => import('../views/Spaces.vue'),
+      children: [
+        {
+          path: 'new', 
+          name: 'new spaces',
+          component: () => import('../components/Spaces/NewSpace.vue'),
+          meta: { 
+            requiresAuth: true
+          }
+      },
+        {
+        path: 'panel/:id',
+        name: 'Space Panel',
+        component: () => import('../components/Spaces/SpacePanel.vue'),
+          meta: {
+          requiresAuth: true
+          }
+        },
+      ],
       meta: { 
         requiresAuth: true
       }
     },
-
-      {
-        path: '/spaces/new', 
-        name: 'new spaces',
-        component: () => import('../components/Spaces/NewSpace.vue'),
-        meta: { 
-          requiresAuth: true
-        }
-    },
     {
-      path: '/space/panel/:id',
-      name: 'Space Panel',
-      component: () => import('../components/Spaces/SpacePanel.vue'),
-      meta: {
-        requiresAuth: true
-      }
-      }
+      path: '/space/current/:id',
+      name: 'User Space', 
+      component: () => import('../components/Spaces/UserSpace.vue')
+    }
   ]
 })
 
