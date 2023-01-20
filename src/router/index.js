@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Locations from '../views/Locations.vue'
 import {getAuth, onAuthStateChanged} from 'firebase/auth'
 
 const router = createRouter({
@@ -10,14 +9,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
-    },
-    {
-      path: '/locations',
-      name: 'locations',
-      component: Locations,
-      meta: { 
-        requiresAuth: true
-      }
     },
     {
       path: '/auth/:state',
@@ -31,7 +22,32 @@ const router = createRouter({
       meta: { 
         requiresAuth: true
       }
-    }
+    },
+    {
+      path: '/spaces',
+      name: 'spaces',
+      component: () => import('../views/Spaces.vue'),
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+      {
+        path: '/spaces/new', 
+        name: 'new spaces',
+        component: () => import('../components/Spaces/NewSpace.vue'),
+        meta: { 
+          requiresAuth: true
+        }
+    },
+    {
+      path: '/space/panel/:id',
+      name: 'Space Panel',
+      component: () => import('../components/Spaces/SpacePanel.vue'),
+      meta: {
+        requiresAuth: true
+      }
+      }
   ]
 })
 
