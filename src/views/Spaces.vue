@@ -32,7 +32,7 @@ const generateSpacePanel = (id) => {
                     <h3 class="text-lg mb-2">{{ space.amount }} Parking Spaces</h3>
             </div>
         </div>
-            <button @click="router.push('/spaces/new')">New Space</button>
+            <button @click="router.push('/space/new')">New Space</button>
         </Layout>
     </div>
      <span v-else>You have no access to this page.</span>

@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { Marker } from "mapbox-gl";
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import Modal from '../Modal.vue';
+import VSelect from '../VSelect.vue';
 const props = defineProps({ 
     auth: { 
         type: Object,
@@ -20,9 +22,10 @@ const newSpace = ref({
     location: {},
     createdBy: null,
     createdAt: Date.now(),
+    pricePoints: [],
     premiumFeatures: { 
         analytics: false,
-        smartId: false,
+        messaging: false,
         'real-time': false,
     }
 })
@@ -30,6 +33,7 @@ const newSpace = ref({
 const geocoder = ref(MapboxGeocoder)
 
 const addMarker = ref(false)
+
 
 
 const initMap = () => { 
@@ -92,8 +96,30 @@ onMounted(() => {
     initMap()
 })
 
+async function getAddressFromCoords() {
+      const lng = newSpace.value.location.lng;
+      const lat = newSpace.value.location.lat;
+      const accessToken = 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh2dmc4MGl5bzN3bXRsNGRmbDVqOCJ9.egn7CgNwwq8bmEtE1pkXyw';
+      const endpoint = 'mapbox.places';
+      const limit = 1;
+      const url = `https://api.mapbox.com/geocoding/v5/${endpoint}/${lng},${lat}.json?access_token=${accessToken}&limit=${limit}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.features.length > 0) {
+          newSpace.value.location.locationName = data.features[0].place_name;
+        } else {
+           newSpace.value.location.locationName = 'No address found';
+        }
+      } catch (error) {
+        console.error(error);
+      }
+     }
+
 const addSpace = async () => { 
-   
+
+    await getAddressFromCoords()
+    
     await fetch('http://localhost:3000/spaces/add',
         { 
         method: 'POST',
@@ -102,25 +128,77 @@ const addSpace = async () => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('DATA', data)
+            newSpace.value = data
         })
+        if (newSpace.value.premiumFeatures.analytics) { 
+        await fetch('http://localhost:3000/analytics/create', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: newSpace.value._id,
+                amount: newSpace.value.amount,
+                views: []
+                })
+            })
+        }
 }
+
+const pricePointStatus = ref(false)
+
+const randomId = ref(0)
+
+const newPricePoint = ref({
+    id: randomId.value,
+    type: '',
+    price: 0,
+})
+
+const handleSubmit = () => { 
+    pricePointStatus.value = false
+    newSpace.value.pricePoints.push(newPricePoint.value)
+    newPricePoint.value = {
+        type: '',
+        price: 0,
+    }
+    randomId.value += 1
+}
+
+const removePricePoint = ref((id) => {
+    const filtered = newSpace.value.pricePoints.filter(item => item.id !== id)
+
+    newSpace.value.pricePoints = filtered
+
+})
 
 </script>
 
 <template>
     <div class="flex flex-row bg-slate-200 w-full justify-between shadow-md ml-1 mr-1">
-
             <div class="items-center w-2/6">
+                {{ newSpace.location.lng }} {{ newSpace.location.lat }}
                 <div class="mb-6">
-                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-2xl">Name</label>
+                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Name</label>
                     <input type="text" v-model="newSpace.title" id="large-input" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
                 <div class="mb-6">
-                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-2xl">Parking Space</label>
+                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Parking Space</label>
                     <input type="number" min="1" max="250" v-model="newSpace.amount" id="large-input" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
-                <h3>Premium Features</h3>
+                <h3 class="text-slate-500">Price Points</h3>
+                    <div class="mb-2">
+                        <div v-if="newSpace.pricePoints && newSpace.pricePoints.length > 0">
+                            {{ randomId }} {{  newSpace.pricePoints }}
+                            <div v-for="(pricePoint,idx) in newSpace.pricePoints" :key="pricePoint.type + idx" class="bg-slate-50 w-fit p-2 rounded mb-2">
+                                    <span class="lowercase mr-1">{{ pricePoint.price }}$ per {{ pricePoint.type }}</span>
+                                    <button class="bg-red-400 text-white rounded-full p-0 w-6 mr-2" @click.passive="removePricePoint(pricePoint.id)">-</button>
+                                    <button v-if="idx === newSpace.pricePoints.length - 1" @click="pricePointStatus = !pricePointStatus" class="bg-slate-800 text-white rounded-full p-0 w-6">+</button>
+                            </div>
+                        </div> 
+                        <div v-else>
+                            <button @click="pricePointStatus = !pricePointStatus" class="bg-slate-800 text-white rounded-md text-sm">Create Price Point</button>
+                        </div>
+                    </div>
+                <h3 class="text-slate-500">Premium Features</h3>
                 <div class="flex flex-row justify-between">
                     <label v-for="(feature,key,index) in newSpace.premiumFeatures" :key="key +index" class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" v-model="newSpace.premiumFeatures[key]" value="true" class="sr-only peer">
@@ -142,6 +220,16 @@ const addSpace = async () => {
             </div>
             <div>
             </div>
+            <Modal :open="pricePointStatus" @close="pricePointStatus = false" @submit="handleSubmit()">
+                <div class="bg-slate-50">
+                        <section>
+                            <label for="countries" class="block mb-2 text-sm font-medium text-blac">Select an option</label>
+                            {{ newPricePoint }}
+                            <VSelect  @input="(e) => newPricePoint.type = e" :options="['hour', 'day', 'minutes']" placeholder="Test" />
+                            <input type="number" v-model="newPricePoint.price"  placeholder="Amount..." class="bg-gray-50 border uppercase border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        </section>
+                </div>
+            </Modal>
     </div>
 </template>
 
@@ -150,5 +238,12 @@ const addSpace = async () => {
     width: 100%;
     height: 400px;
     border-radius: 5px;
+}
+
+#modal { 
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 80px;
 }
 </style>
