@@ -23,7 +23,6 @@ onMounted(() => {
   <main class="bg-slate-50 text-slate-900 flex flex-col">
     <Navigation :auth="auth"/>
     <RouterView :auth="auth" />
-    <Footer />
   </main>
 </template>
 
@@ -32,6 +31,10 @@ onMounted(() => {
 
 *{
   font-family: 'Roboto', sans-serif;
+}
+
+#app { 
+  background-color: rgb(248 250 252 / var(--tw-bg-opacity)) !important;
 }
 
 </style>

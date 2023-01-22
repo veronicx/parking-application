@@ -33,7 +33,7 @@ defineProps({
 
 
 <template>
-    <nav class="flex flex-col cursor-pointer justify-between items-center mb-8 p-8  sm:flex-row sm:h-16 shadow-md" @mouseleave="toggleDropdown = 'hidden'">
+    <nav class="flex flex-col cursor-pointer justify-between items-center mb-8 p-8 bg-white  sm:flex-row sm:h-16 shadow-md" @mouseleave="toggleDropdown = 'hidden'">
         <div class="flex flex-col sm:flex-row items-center justify-between w-full sm:w-1/3">
         <span class="uppercase text-2xl flex flex-row justify-between w-full items-center sm:block sm:w-fit">
             Parklace
@@ -60,7 +60,7 @@ defineProps({
        </div>
        </div>
        <div :style="`display:${toggleDropdown}`" class="hidden mt-8 flex-row sm:flex sm:mt-0">
-          <img class="w-8 h-8 border-2 absolute rounded-full  m-auto" src="../assets/avatar.png">
+          <img class="w-8 h-8 border-2 absolute rounded-full  m-auto" src="../assets/avatar2.png">
           <select v-model="optionVal" id="select" name="options" class="w-8 h-8 z-20 text-transparent rounded cursor-pointer bg-transparent outline-none appearance-none indent-0 overflow-hidden">
                 <option v-if="auth.uid" value="/profile" class="text-slate-900">Profile</option>
                 <option v-if="auth.uid" value="/settings" class="text-slate-900">Settings</option>
