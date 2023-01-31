@@ -5,6 +5,10 @@ import { Marker } from "mapbox-gl";
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import Modal from '../Modal.vue';
 import VSelect from '../VSelect.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+
 const props = defineProps({ 
     auth: { 
         type: Object,
@@ -140,7 +144,12 @@ const addSpace = async () => {
                 views: []
                 })
             })
-        }
+    }
+
+    console.log('TEST')
+    if (newSpace.value._id) { 
+     await  router.push(`/space/panel/${newSpace.value._id}`)   
+    }
 }
 
 const pricePointStatus = ref(false)
@@ -157,10 +166,10 @@ const handleSubmit = () => {
     pricePointStatus.value = false
     newSpace.value.pricePoints.push(newPricePoint.value)
     newPricePoint.value = {
+        id:randomId.value += 1,
         type: '',
         price: 0,
     }
-    randomId.value += 1
 }
 
 const removePricePoint = ref((id) => {
@@ -173,25 +182,25 @@ const removePricePoint = ref((id) => {
 </script>
 
 <template>
-    <div class="flex flex-row bg-slate-200 w-full justify-between shadow-md ml-1 mr-1">
-            <div class="items-center w-2/6">
-                {{ newSpace.location.lng }} {{ newSpace.location.lat }}
+    <div class="flex flex-col bg-slate-50 w-full items-center justify-between shadow-md ml-1 mr-1 p-4">
+            <div class="items-center w-2/6 p-4 shadow-blue-400 shadow-lg">
                 <div class="mb-6">
-                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Name</label>
+                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Parking Name</label>
                     <input type="text" v-model="newSpace.title" id="large-input" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
                 <div class="mb-6">
                     <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Parking Space</label>
                     <input type="number" min="1" max="250" v-model="newSpace.amount" id="large-input" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
-                <h3 class="text-slate-500">Price Points</h3>
+                <h3 class="text-slate-500 text-xl">Price Points</h3>
                     <div class="mb-2">
                         <div v-if="newSpace.pricePoints && newSpace.pricePoints.length > 0">
-                            {{ randomId }} {{  newSpace.pricePoints }}
-                            <div v-for="(pricePoint,idx) in newSpace.pricePoints" :key="pricePoint.type + idx" class="bg-slate-50 w-fit p-2 rounded mb-2">
+                            <div v-for="(pricePoint,idx) in newSpace.pricePoints" :key="pricePoint.type + idx" class="bg-slate-50 w-2/3 flex justify-between  p-2 rounded mb-2">
                                     <span class="lowercase mr-1">{{ pricePoint.price }}$ per {{ pricePoint.type }}</span>
-                                    <button class="bg-red-400 text-white rounded-full p-0 w-6 mr-2" @click.passive="removePricePoint(pricePoint.id)">-</button>
+                                  <div>
+                                      <button class="bg-red-400 text-white rounded-full p-0 w-6 mr-2" @click.passive="removePricePoint(pricePoint.id)">-</button>
                                     <button v-if="idx === newSpace.pricePoints.length - 1" @click="pricePointStatus = !pricePointStatus" class="bg-slate-800 text-white rounded-full p-0 w-6">+</button>
+                                  </div>
                             </div>
                         </div> 
                         <div v-else>
@@ -206,27 +215,27 @@ const removePricePoint = ref((id) => {
                         <span class="ml-3 text-sm font-medium text-slate-900 uppercase">{{ key }}</span>
                     </label>
                 </div>
-            </div>
-            <div class="flex flex-col m-4 w-4/6">
-                <div class="">
-                    <span class="absolute z-40 bg-black text-white rounded" v-if="!newSpace.location.lng" @click="addMarker = !addMarker">{{ addMarker ? 'Cancel Location' : 'Add Location'}}</span>
-                    <span  class="absolute z-40 bg-black text-white rounded" v-else @click="clearPointer">Clear Location</span>
-                    <div class="map__gl" id="map" />
+                <div class="flex flex-col w-full justify-center items-center shadow-lg p-4">
+                <h3 class="text-slate-500 text-4xl">Location</h3>
+                    <div class="">
+                        <span class="absolute z-40 bg-black text-white rounded" v-if="!newSpace.location.lng" @click="addMarker = !addMarker">{{ addMarker ? 'Cancel Location' : 'Add Location'}}</span>
+                        <span  class="absolute z-40 bg-black text-white rounded" v-else @click="clearPointer">Clear Location</span>
+                        <div class="map__gl border-2 w-4/6" id="map" />
+                    </div>
+                    <div class="flex flex-row justify-end">
+                        <button class="w-16 h-12 bg-black text-white rounded-lg m-2">Cancel</button>
+                        <button class="w-16 h-12 bg-green-400 text-white rounded-lg m-2" @click="addSpace">Submit</button>
+                    </div>
+                        </div>
+                    <div>
                 </div>
-                <div class="flex flex-row justify-end">
-                    <button class="w-16 h-12 bg-black text-white rounded-lg m-2">Cancel</button>
-                    <button class="w-16 h-12 bg-green-400 text-white rounded-lg m-2" @click="addSpace">Submit</button>
-                </div>
-            </div>
-            <div>
             </div>
             <Modal :open="pricePointStatus" @close="pricePointStatus = false" @submit="handleSubmit()">
-                <div class="bg-slate-50">
+                <div class="bg-slate-50 p-4">
                         <section>
                             <label for="countries" class="block mb-2 text-sm font-medium text-blac">Select an option</label>
-                            {{ newPricePoint }}
-                            <VSelect  @input="(e) => newPricePoint.type = e" :options="['hour', 'day', 'minutes']" placeholder="Test" />
-                            <input type="number" v-model="newPricePoint.price"  placeholder="Amount..." class="bg-gray-50 border uppercase border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <VSelect class="mb-2"  @input="(e) => newPricePoint.type = e" :options="['hour']" placeholder="add price point" />
+                            <input type="number" min="0" v-model="newPricePoint.price"  placeholder="Amount..." class="bg-gray-50 border uppercase border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         </section>
                 </div>
             </Modal>
@@ -235,14 +244,14 @@ const removePricePoint = ref((id) => {
 
 <style>
 .map__gl {
-    width: 100%;
     height: 400px;
+    width: 100%;
+    min-width: 60vh;
     border-radius: 5px;
 }
 
 #modal { 
     position: absolute;
-    width: 100%;
     height: 100%;
     margin-bottom: 80px;
 }
