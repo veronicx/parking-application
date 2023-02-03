@@ -6,6 +6,14 @@ import Footer from './components/Footer.vue'
 import { getAuth, onAuthStateChanged,} from 'firebase/auth'
 import { onMounted, ref } from 'vue'
 
+const generateUnRegisteredSession = () => {
+  const sessionId = localStorage.getItem('sessionId')
+  if(!sessionId) {
+     const newSession = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('sessionId',newSession );
+  }
+}
+
 const auth = ref({})
 onMounted(() => { 
   onAuthStateChanged(getAuth(), (user) => { 
@@ -13,6 +21,7 @@ onMounted(() => {
       auth.value = user
     } else { 
       auth.value = {}
+      generateUnRegisteredSession()
     }
   })
 })
@@ -21,7 +30,7 @@ onMounted(() => {
 
 <template>
   <main class="bg-slate-50 text-slate-900 flex flex-col">
-    <Navigation :auth="auth"/>
+    <Navigation :auth="auth" />
     <RouterView :auth="auth" />
   </main>
 </template>
