@@ -182,64 +182,152 @@ const removePricePoint = ref((id) => {
 </script>
 
 <template>
-    <div class="flex flex-col bg-slate-50 w-full items-center justify-between shadow-md ml-1 mr-1 p-4">
-            <div class="items-center w-2/6 p-4 shadow-blue-400 shadow-lg">
-                <div class="mb-6">
-                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Parking Name</label>
-                    <input type="text" v-model="newSpace.title" id="large-input" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                </div>
-                <div class="mb-6">
-                    <label for="large-input" class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl">Parking Space</label>
-                    <input type="number" min="1" max="250" v-model="newSpace.amount" id="large-input" class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                </div>
-                <h3 class="text-slate-500 text-xl">Price Points</h3>
-                    <div class="mb-2">
-                        <div v-if="newSpace.pricePoints && newSpace.pricePoints.length > 0">
-                            <div v-for="(pricePoint,idx) in newSpace.pricePoints" :key="pricePoint.type + idx" class="bg-slate-50 w-2/3 flex justify-between  p-2 rounded mb-2">
-                                    <span class="lowercase mr-1">{{ pricePoint.price }}$ per {{ pricePoint.type }}</span>
-                                  <div>
-                                      <button class="bg-red-400 text-white rounded-full p-0 w-6 mr-2" @click.passive="removePricePoint(pricePoint.id)">-</button>
-                                    <button v-if="idx === newSpace.pricePoints.length - 1" @click="pricePointStatus = !pricePointStatus" class="bg-slate-800 text-white rounded-full p-0 w-6">+</button>
-                                  </div>
-                            </div>
-                        </div> 
-                        <div v-else>
-                            <button @click="pricePointStatus = !pricePointStatus" class="bg-slate-800 text-white rounded-md text-sm">Create Price Point</button>
-                        </div>
-                    </div>
-                <h3 class="text-slate-500">Premium Features</h3>
-                <div class="flex flex-row justify-between">
-                    <label v-for="(feature,key,index) in newSpace.premiumFeatures" :key="key +index" class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" v-model="newSpace.premiumFeatures[key]" value="true" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                        <span class="ml-3 text-sm font-medium text-slate-900 uppercase">{{ key }}</span>
-                    </label>
-                </div>
-                <div class="flex flex-col w-full justify-center items-center shadow-lg p-4">
-                <h3 class="text-slate-500 text-4xl">Location</h3>
-                    <div class="">
-                        <span class="absolute z-40 bg-black text-white rounded" v-if="!newSpace.location.lng" @click="addMarker = !addMarker">{{ addMarker ? 'Cancel Location' : 'Add Location'}}</span>
-                        <span  class="absolute z-40 bg-black text-white rounded" v-else @click="clearPointer">Clear Location</span>
-                        <div class="map__gl border-2 w-4/6" id="map" />
-                    </div>
-                    <div class="flex flex-row justify-end">
-                        <button class="w-16 h-12 bg-black text-white rounded-lg m-2">Cancel</button>
-                        <button class="w-16 h-12 bg-green-400 text-white rounded-lg m-2" @click="addSpace">Submit</button>
-                    </div>
-                        </div>
-                    <div>
-                </div>
+  <div class="flex flex-col bg-slate-50 w-full items-center justify-between shadow-md ml-1 mr-1 p-4">
+    <div class="items-center w-2/6 p-4 shadow-blue-400 shadow-lg">
+      <div class="mb-6">
+        <label
+          for="large-input"
+          class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl"
+        >Parking Name</label>
+        <input
+          id="large-input"
+          v-model="newSpace.title"
+          type="text"
+          class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+      </div>
+      <div class="mb-6">
+        <label
+          for="large-input"
+          class="block mb-2  font-medium text-slate-900 mt-4 uppercase text-xl"
+        >Parking Space</label>
+        <input
+          id="large-input"
+          v-model="newSpace.amount"
+          type="number"
+          min="1"
+          max="250"
+          class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+      </div>
+      <h3 class="text-slate-500 text-xl">
+        Price Points
+      </h3>
+      <div class="mb-2">
+        <div v-if="newSpace.pricePoints && newSpace.pricePoints.length > 0">
+          <div
+            v-for="(pricePoint,idx) in newSpace.pricePoints"
+            :key="pricePoint.type + idx"
+            class="bg-slate-50 w-2/3 flex justify-between  p-2 rounded mb-2"
+          >
+            <span class="lowercase mr-1">{{ pricePoint.price }}$ per {{ pricePoint.type }}</span>
+            <div>
+              <button
+                class="bg-red-400 text-white rounded-full p-0 w-6 mr-2"
+                @click.passive="removePricePoint(pricePoint.id)"
+              >
+                -
+              </button>
+              <button
+                v-if="idx === newSpace.pricePoints.length - 1"
+                class="bg-slate-800 text-white rounded-full p-0 w-6"
+                @click="pricePointStatus = !pricePointStatus"
+              >
+                +
+              </button>
             </div>
-            <Modal :open="pricePointStatus" @close="pricePointStatus = false" @submit="handleSubmit()">
-                <div class="bg-slate-50 p-4">
-                        <section>
-                            <label for="countries" class="block mb-2 text-sm font-medium text-blac">Select an option</label>
-                            <VSelect class="mb-2"  @input="(e) => newPricePoint.type = e" :options="['hour']" placeholder="add price point" />
-                            <input type="number" min="0" v-model="newPricePoint.price"  placeholder="Amount..." class="bg-gray-50 border uppercase border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        </section>
-                </div>
-            </Modal>
+          </div>
+        </div> 
+        <div v-else>
+          <button
+            class="bg-slate-800 text-white rounded-md text-sm"
+            @click="pricePointStatus = !pricePointStatus"
+          >
+            Create Price Point
+          </button>
+        </div>
+      </div>
+      <h3 class="text-slate-500">
+        Premium Features
+      </h3>
+      <div class="flex flex-row justify-between">
+        <label
+          v-for="(feature,key,index) in newSpace.premiumFeatures"
+          :key="key +index"
+          class="relative inline-flex items-center cursor-pointer"
+        >
+          <input
+            v-model="newSpace.premiumFeatures[key]"
+            type="checkbox"
+            value="true"
+            class="sr-only peer"
+          >
+          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" />
+          <span class="ml-3 text-sm font-medium text-slate-900 uppercase">{{ key }}</span>
+        </label>
+      </div>
+      <div class="flex flex-col w-full justify-center items-center shadow-lg p-4">
+        <h3 class="text-slate-500 text-4xl">
+          Location
+        </h3>
+        <div class="">
+          <span
+            v-if="!newSpace.location.lng"
+            class="absolute z-40 bg-black text-white rounded"
+            @click="addMarker = !addMarker"
+          >{{ addMarker ? 'Cancel Location' : 'Add Location' }}</span>
+          <span
+            v-else
+            class="absolute z-40 bg-black text-white rounded"
+            @click="clearPointer"
+          >Clear Location</span>
+          <div
+            id="map"
+            class="map__gl border-2 w-4/6"
+          />
+        </div>
+        <div class="flex flex-row justify-end">
+          <button class="w-16 h-12 bg-black text-white rounded-lg m-2">
+            Cancel
+          </button>
+          <button
+            class="w-16 h-12 bg-green-400 text-white rounded-lg m-2"
+            @click="addSpace"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+      <div />
     </div>
+    <Modal
+      :open="pricePointStatus"
+      @close="pricePointStatus = false"
+      @submit="handleSubmit()"
+    >
+      <div class="bg-slate-50 p-4">
+        <section>
+          <label
+            for="countries"
+            class="block mb-2 text-sm font-medium text-blac"
+          >Select an option</label>
+          <VSelect
+            class="mb-2"
+            :options="['hour']"
+            placeholder="add price point"
+            @input="(e) => newPricePoint.type = e"
+          />
+          <input
+            v-model="newPricePoint.price"
+            type="number"
+            min="0"
+            placeholder="Amount..."
+            class="bg-gray-50 border uppercase border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          >
+        </section>
+      </div>
+    </Modal>
+  </div>
 </template>
 
 <style>
