@@ -1,6 +1,6 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import Navigation from './components/Navigation.vue'
+import TNavigation from './components/TNavigation.vue'
 import Footer from './components/Footer.vue'
 
 import { getAuth, onAuthStateChanged,} from 'firebase/auth'
@@ -30,7 +30,7 @@ onMounted(() => {
 
 <template>
   <main class="bg-slate-50 text-slate-900 flex flex-col">
-    <Navigation :auth="auth" />
+    <TNavigation :auth="auth" />
     <RouterView :auth="auth" />
   </main>
 </template>

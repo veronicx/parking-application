@@ -87,7 +87,7 @@ function generateID() {
 const config = {
         enableTime: true,
         noCalendar: false,
-        dateFormat: 'H:i:S d-m-Y',
+        dateFormat: 'Y-m-d H:i',
         minDate: Date.now(),
 }
 
@@ -173,8 +173,8 @@ const submitOrder = async () => {
             'person-email': newOrder.value.personEmail,
             'person-phone': newOrder.value.personPhone,
             'order-duration': {
-                'startAt': moment(newOrder.value['order-duration'].startAt, 'YYYY-MM-DD').toDate(),
-                'endAt': moment(newOrder.value['order-duration'].endAt, 'YYYY-MM-DD').toDate(),
+                'startAt': moment(newOrder.value['order-duration'].startAt).toDate(),
+                'endAt': moment(newOrder.value['order-duration'].endAt).toDate(),
                 'completed': false
             },
             'order-price': newOrder.value.price,
