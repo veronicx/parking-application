@@ -3,8 +3,8 @@ import Layout from '../components/Spaces/Layout.vue';
 import { onMounted, ref } from 'vue';
 import {  useRouter } from 'vue-router';
 const router = useRouter()
-const props = defineProps({ 
-    auth: { 
+const props = defineProps({
+    auth: {
         type: Object,
         required: true,
      }
@@ -12,13 +12,13 @@ const props = defineProps({
 
 const spaces = ref([])
 
-onMounted(() => { 
-    fetch(`http://localhost:3000/spaces/get/${props.auth.uid}`)
+onMounted(() => {
+    fetch(`${import.meta.env.VITE_PARKLACEAPI}/spaces/get/${props.auth.uid}`)
     .then((res) => res.json())
     .then((json) => (spaces.value = json))
 })
 
-const generateSpacePanel = (id) => { 
+const generateSpacePanel = (id) => {
     router.push(`/space/panel/${id}`)
 }
 
