@@ -12,12 +12,12 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 
 import { initializeApp } from "firebase/app";
 const firebaseConfig = {
-  apiKey: "AIzaSyCvhwDu_ucWSaarKyruClKESs5rNM9cGeU",
-  authDomain: "parking-app-367020.firebaseapp.com",
-  projectId: "parking-app-367020",
-  storageBucket: "parking-app-367020.appspot.com",
-  messagingSenderId: "154115529008",
-  appId: "1:154115529008:web:2bd070d7172f07b31b10f5"
+  apiKey: import.meta.env.VITE_FIREBASEAPIKEY,
+  authDomain: import.meta.env.VITE_FIREBASEAUTHDOMAIN,
+  projectId: import.meta.env.VITE_FIREBASEPROJECTID,
+  storageBucket: import.meta.env.VITE_FIREBASESTORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASEMESSENGERID,
+  appId: import.meta.env.VITE_FIREBASEAPPID
 };
 initializeApp(firebaseConfig);
 

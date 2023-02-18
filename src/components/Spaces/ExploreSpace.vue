@@ -8,7 +8,7 @@ import { useRoute } from 'vue-router';
 import moment from 'moment'
 import Modal from '../Modal.vue';
 const props = defineProps({
-    auth: { 
+    auth: {
         type: Object,
         required: true
     }
@@ -22,7 +22,7 @@ const data = ref({})
 const id = ref('')
 const qrCode = ref('')
 const modalToggler = ref(false)
-const newOrder = ref({ 
+const newOrder = ref({
     personName: '',
     personPhone: '',
     personEmail: '',
@@ -34,7 +34,7 @@ const newOrder = ref({
     price: 0,
 })
 
-const errorObject = ref({  
+const errorObject = ref({
     name: {
         message: '',
         checked: false,
@@ -57,16 +57,16 @@ const errorObject = ref({
     },
 })
 
-const collection = ref({ 
+const collection = ref({
     viewed: Date.now(),
     time: 0,
     viewedBy: {},
     ordered: false,
 })
 
-const startAnalytics = () => { 
+const startAnalytics = () => {
         collection.value.viewed = Date.now()
-        collection.value.viewedBy =  props.auth.uid ? props.auth.uid : {  
+        collection.value.viewedBy =  props.auth.uid ? props.auth.uid : {
         icognito: true,
         id: localStorage.getItem('sessionId'),
         }
@@ -111,48 +111,48 @@ const calculateDuration = computed(() => {
   return roundedHours;
 })
 
-const checkout = ref((duration) => { 
+const checkout = ref((duration) => {
 
     newOrder.value.price = duration / data.value.orderPricePoints[0].price
     if (duration >= 24) {
             return `${Math.floor(duration / 24)} Day`
     }
-    else { 
+    else {
             return `${duration} Hours`
          }
 })
 
 
 
-const handleInput = (key,value) => { 
+const handleInput = (key,value) => {
     const data = validateInput(key,value)
-    if(data.key && data.message) { 
+    if(data.key && data.message) {
         errorObject.value[key].message = data.message
-    } else { 
+    } else {
         errorObject.value[key].message = ''
         errorObject.value[key].checked = false
     }
 }
 
-onMounted(async () => { 
+onMounted(async () => {
      id.value = route.params.id
     if (listingStore().listing.find(item => item._id === id.value)) {
         data.value = listingStore().listing.find(item => item._id === id.value)
     }
-    else { 
-        await fetch(`http://localhost:3000/spaces/one/${route.params.id}`)
+    else {
+        await fetch(`${import.meta.env.VITE_PARKLACEAPI}/spaces/one/${route.params.id}`)
             .then(response => response.json())
                     .then(response => data.value = response)
     }
-    if (data.value.premiumFeatures.analytics) { 
-        startAnalytics()   
+    if (data.value.premiumFeatures.analytics) {
+        startAnalytics()
     }
 
 })
-onBeforeUnmount(async () => { 
+onBeforeUnmount(async () => {
     collection.value.time = Math.abs(Date.now() - collection.value.viewed) / 1000
 
-    await fetch('http://localhost:3000/analytics/view/add',  { 
+    await fetch(`${import.meta.env.VITE_PARKLACEAPI}/analytics/view/add`,  {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({id: id.value, view:collection.value})
@@ -161,9 +161,9 @@ onBeforeUnmount(async () => {
             .then(response => console.log('RESPONSE', response))
 })
 
-const submitOrder = async () => { 
-    await fetch('http://localhost:3000/order/new',
-        { 
+const submitOrder = async () => {
+    await fetch(`${import.meta.env.VITE_PARKLACEAPI}/order/new`,
+        {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -185,7 +185,7 @@ const submitOrder = async () => {
         })
             .then(response => response.json())
                 .then(data => {
-                    if(data) { 
+                    if(data) {
                         modalToggler.value = true
                         qrCode.value = data['qr-code']
                         collection.value.ordered = true
@@ -194,7 +194,7 @@ const submitOrder = async () => {
 
 }
 
-</script> 
+</script>
 
 <template>
   <div class="flex flex-col items-center w-full mt-4 mb-4">
@@ -217,7 +217,7 @@ const submitOrder = async () => {
         <div class="flex flex-col w-5/6 md:w-3/6">
           <section class="w-full flex-col justify-start md:p-2">
             <span class="text-lg text-slate-400 ml-1">Name</span>
-            <input 
+            <input
               v-model="newOrder.personName"
               type="text"
               placeholder="Name..."
@@ -249,7 +249,7 @@ const submitOrder = async () => {
           </section>
           <section class="w-full flex-col justify-start md:p-2 mb-1">
             <span class="text-lg text-slate-400 ml-1">Email</span>
-            <input 
+            <input
               v-model="newOrder.personEmail"
               type="mail"
               class="lowercase"
@@ -268,7 +268,7 @@ const submitOrder = async () => {
             <div class="flex flex-col sm:items-center md:flex-row w-full flex-start mt-1">
               <div class="flex w-full flex-col md:w-3/6 md:mr-1">
                 <span>Starting Date</span>
-                <flat-pickr 
+                <flat-pickr
                   v-model="newOrder['order-duration'].startAt"
                   :config="config"
                   placeholder="Starting Date..."
@@ -280,7 +280,7 @@ const submitOrder = async () => {
                 class="flex flex-col w-full md:w-3/6 md:ml-1"
               >
                 <span>Ending Date</span>
-                <flat-pickr 
+                <flat-pickr
                   v-model="newOrder['order-duration'].endAt"
                   :config="config"
                   placeholder="Ending Date..."
@@ -289,10 +289,10 @@ const submitOrder = async () => {
               </div>
             </div>
           </section>
-          <div 
+          <div
             v-if="newOrder['order-duration'].startAt && newOrder['order-duration'].endAt"
             class="w-full flex-col justify-center md:p-2  mb-1"
-          >   
+          >
             <h4 class="mb-2">
               Total
             </h4>

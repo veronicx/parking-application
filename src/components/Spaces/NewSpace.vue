@@ -9,8 +9,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter()
 
-const props = defineProps({ 
-    auth: { 
+const props = defineProps({
+    auth: {
         type: Object,
         required: true,
      }
@@ -27,7 +27,7 @@ const newSpace = ref({
     createdBy: null,
     createdAt: Date.now(),
     pricePoints: [],
-    premiumFeatures: { 
+    premiumFeatures: {
         analytics: false,
         messaging: false,
         'real-time': false,
@@ -40,7 +40,7 @@ const addMarker = ref(false)
 
 
 
-const initMap = () => { 
+const initMap = () => {
         map.value = new mapboxgl.Map({
     container: 'map', // container ID
     style: 'https://api.maptiler.com/maps/toner-v2/style.json?key=qxYJYciqhDs6S1mBLLEZ', // style URL
@@ -51,26 +51,26 @@ const initMap = () => {
     initializeGeodecoders()
 
     map.value.on('contextmenu', (e) => {
-        if (addMarker.value) { 
-            createPointer(e)   
+        if (addMarker.value) {
+            createPointer(e)
             addMarker.value = false
             }
         })
 }
 
-const createPointer = (event) => { 
+const createPointer = (event) => {
 
     let element = document.createElement('img')
     element.id = 'map-pointer'
     element.src = 'http://cdn.onlinewebfonts.com/svg/img_425330.png'
-    element.addEventListener('click', () => { 
+    element.addEventListener('click', () => {
         map.value.flyTo({
             center: [event.lngLat.lng, event.lngLat.lat],
             zoom: 12
         })
     })
     element.className = 'w-8 h-8 object-contain'
-        
+
     const newMarker = new Marker(element).setLngLat([event.lngLat.lng, event.lngLat.lat])
     newMarker.addTo(map.value)
     newSpace.value.location = {
@@ -78,23 +78,23 @@ const createPointer = (event) => {
         }
 }
 
-const clearPointer = () => { 
+const clearPointer = () => {
     const el = document.getElementById('map-pointer')
     el.remove()
     newSpace.value.location = {}
 }
 
-const initializeGeodecoders = () => { 
+const initializeGeodecoders = () => {
     geocoder.value = new MapboxGeocoder({
         accessToken: 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh2dmc4MGl5bzN3bXRsNGRmbDVqOCJ9.egn7CgNwwq8bmEtE1pkXyw',
         mapboxgl: mapboxgl
     });
-      
+
       map.value.addControl(geocoder.value);
 }
 
 onMounted(() => {
-    if (props.auth && props.auth.uid) { 
+    if (props.auth && props.auth.uid) {
         newSpace.value.createdBy = {uid:props.auth.uid, email: props.auth.email, displayName: props.auth.providerData[0].displayName}
     }
     initMap()
@@ -120,12 +120,12 @@ async function getAddressFromCoords() {
       }
      }
 
-const addSpace = async () => { 
+const addSpace = async () => {
 
     await getAddressFromCoords()
-    
-    await fetch('http://localhost:3000/spaces/add',
-        { 
+
+    await fetch(`${import.meta.env.VITE_PARKLACEAPI}/spaces/add`,
+        {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSpace.value)
@@ -134,8 +134,8 @@ const addSpace = async () => {
         .then(data => {
             newSpace.value = data
         })
-        if (newSpace.value.premiumFeatures.analytics) { 
-        await fetch('http://localhost:3000/analytics/create', { 
+        if (newSpace.value.premiumFeatures.analytics) {
+        await fetch(`${import.meta.env.VITE_PARKLACEAPI}/analytics/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -147,8 +147,8 @@ const addSpace = async () => {
     }
 
     console.log('TEST')
-    if (newSpace.value._id) { 
-     await  router.push(`/space/panel/${newSpace.value._id}`)   
+    if (newSpace.value._id) {
+     await  router.push(`/space/panel/${newSpace.value._id}`)
     }
 }
 
@@ -162,7 +162,7 @@ const newPricePoint = ref({
     price: 0,
 })
 
-const handleSubmit = () => { 
+const handleSubmit = () => {
     pricePointStatus.value = false
     newSpace.value.pricePoints.push(newPricePoint.value)
     newPricePoint.value = {
@@ -237,7 +237,7 @@ const removePricePoint = ref((id) => {
               </button>
             </div>
           </div>
-        </div> 
+        </div>
         <div v-else>
           <button
             class="bg-slate-800 text-white rounded-md text-sm"
@@ -338,7 +338,7 @@ const removePricePoint = ref((id) => {
     border-radius: 5px;
 }
 
-#modal { 
+#modal {
     position: absolute;
     height: 100%;
     margin-bottom: 80px;

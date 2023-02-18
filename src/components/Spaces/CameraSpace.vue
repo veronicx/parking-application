@@ -1,10 +1,15 @@
 <template>
-    <div>
-      <video ref="video" @loadedmetadata="setCanvas"></video>
-      <canvas ref="canvas"></canvas>
-      <button @click="takeScreenshot">Take Screenshot</button>
-    </div>
-  </template>
+  <div>
+    <video
+      ref="video"
+      @loadedmetadata="setCanvas"
+    />
+    <canvas ref="canvas" />
+    <button @click="takeScreenshot">
+      Take Screenshot
+    </button>
+  </div>
+</template>
   
   <script>
   export default {

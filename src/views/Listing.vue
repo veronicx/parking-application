@@ -5,18 +5,18 @@ const listing = ref([])
 
 onMounted(async () => {
     if (listingStore().listing.length < 1) {
-        await fetch('http://localhost:3000/spaces/listing')
+        await fetch(`${import.meta.env.VITE_PARKLACEAPI}/spaces/listing`)
             .then(response => response.json())
             .then(data => {
                 listing.value = data
                 listingStore().updateList(data)
             })
-    } else { 
+    } else {
         listing.value = listingStore().listing
     }
 })
 
-</script> 
+</script>
 
 <template>
     <div class="flex flex-col justify-between h-100 w-100">

@@ -1,13 +1,3 @@
-export const generateDailyLabels =  () => { 
-  const date = new Date();
-  const labels = []
-  const days = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-      for(let i=1;i< days;i++) { 
-        labels.push(i)
-      }
-      return labels
-}
-
 export const options = {
   responsive: true,
   maintainAspectRatio: false,
@@ -27,7 +17,7 @@ export const options = {
       grid: {
         display: false
       },
-      
+
     },
     y: {
       ticks: {
@@ -53,26 +43,45 @@ export const options = {
   }
 }
 
-export const returnOrderDate = (order,date) => { 
-
+  const generateDailyLabels =  () => {
+  const date = new Date();
+  const labels = []
+  const days = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  for(let i=1;i< days;i++) {
+    labels.push(i)
+  }
+  return labels
 }
 
-export const generateChartData = (orders) => { 
- const labels = generateDailyLabels()
- const monthlyOrders = []
- console.log('orders', orders,labels)
-  labels.forEach(label => { 
-    let cc  = 0
-      orders.forEach(order => { 
-        const date = new Date(order['order-duration'].startAt)
-        if(date.getDate() === label) {
-          cc++
-        }
-      })
-      monthlyOrders.push(cc)
-  })
-  return monthlyOrders
+
+
+const generateYearlyLabels =  () => {
+  return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November','December']
 }
 
-  
-  
+const generateWeeklyLabels = () => {
+  return [1,2,3,4,5,6,7]
+}
+
+export const generateLabels = (type) => {
+    switch(type) {
+      case 'yearly':
+        console.log('yes yearly')
+        return generateYearlyLabels();
+        break;
+      case 'monthly':
+        console.log('yes monthly', generateDailyLabels())
+        return generateDailyLabels();
+        break;
+      case 'weekly':
+        console.log('yes weekly')
+        return generateWeeklyLabels();
+        break;
+    }
+}
+
+// export const generateAsyncData = async(type,space) => {
+//   if()
+//
+// }
+

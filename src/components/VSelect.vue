@@ -1,11 +1,12 @@
 <script setup>
+//DEPRECATED COMPONENT
 import { ref } from 'vue'
 
-defineProps({ 
+defineProps({
     placeholder: {
         type: String
     },
-    options: { 
+    options: {
         type: Array,
         required: true
     }
