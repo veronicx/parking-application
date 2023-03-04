@@ -17,13 +17,12 @@ const user = ref({
     password: ''
 })
 
-const register = () => { 
+const register = () => {
     createUserWithEmailAndPassword(getAuth(), user.value.email, user.value.password)
         .then(response => {
             updateProfile(response.user, {
                 displayName: user.value.fullName
             }).then(res => {
-                console.log('response update', res)
             })
         })
         .catch(error => {
@@ -34,7 +33,7 @@ const register = () => {
 }
 
 
-const checkData = (fullName,email,password) => { 
+const checkData = (fullName,email,password) => {
     const currentErrors = new ThrowAuthErrors(fullName, email,password).throwWarnings()
     errors.value = currentErrors
 }
@@ -67,11 +66,11 @@ watch(user.value, (currentValue) => {
             <div v-for="error in errors" :key="error.field">
                 <span v-if="error && error.message" class="text-red-500">{{error.message}}</span>
             </div>
-        
+
         </div>
         <div class="w-3/6 flex flex-row justify-end m-2">
             <span>
-                By signing up, you're agreeing to our 
+                By signing up, you're agreeing to our
                 <router-link to="/auth/policies" class="text-blue-500">Terms & Conditions</router-link> and
                 <router-link to="/auth/policies" class="text-blue-500">Privacy Policy</router-link>
             </span>

@@ -158,7 +158,7 @@ onBeforeUnmount(async () => {
         body: JSON.stringify({id: id.value, view:collection.value})
     })
         .then(response => response.json())
-            .then(response => console.log('RESPONSE', response))
+            .then(response => {})
 })
 
 const submitOrder = async () => {

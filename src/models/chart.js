@@ -66,15 +66,12 @@ const generateWeeklyLabels = () => {
 export const generateLabels = (type) => {
     switch(type) {
       case 'yearly':
-        console.log('yes yearly')
         return generateYearlyLabels();
         break;
       case 'monthly':
-        console.log('yes monthly', generateDailyLabels())
         return generateDailyLabels();
         break;
       case 'weekly':
-        console.log('yes weekly')
         return generateWeeklyLabels();
         break;
     }
