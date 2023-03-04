@@ -146,7 +146,6 @@ const addSpace = async () => {
             })
     }
 
-    console.log('TEST')
     if (newSpace.value._id) {
      await  router.push(`/space/panel/${newSpace.value._id}`)
     }

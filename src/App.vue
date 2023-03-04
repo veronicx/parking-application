@@ -15,11 +15,11 @@ const generateUnRegisteredSession = () => {
 }
 
 const auth = ref({})
-onMounted(() => { 
-  onAuthStateChanged(getAuth(), (user) => { 
+onMounted(() => {
+  onAuthStateChanged(getAuth(), (user) => {
     if (user) {
       auth.value = user
-    } else { 
+    } else {
       auth.value = {}
       generateUnRegisteredSession()
     }
@@ -31,7 +31,7 @@ onMounted(() => {
 <template>
   <main class="bg-slate-50 text-slate-900 flex flex-col">
     <TNavigation :auth="auth" />
-    <RouterView :auth="auth" />
+    <RouterView style="height: 100vh;" :auth="auth" />
   </main>
 </template>
 
@@ -42,7 +42,7 @@ onMounted(() => {
   font-family: 'Roboto', sans-serif;
 }
 
-#app { 
+#app {
   background-color: rgb(248 250 252 / var(--tw-bg-opacity)) !important;
 }
 

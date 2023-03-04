@@ -211,7 +211,7 @@ watch(() => filters.timeFilter,
     v-if="panel"
     class="flex flex-col justify-center w-full"
   >
-    <h1>{{chartData}} {{labels}}</h1>
+    <h1>{{ chartData }} {{ labels }}</h1>
     <section class="w-full bg-white shadow-sm flex flex-col md:flex-row items-center justify-between self-start p-4">
       <div class="w-3/6 lg:w-fit bg-white h-fit flex flex-col  md:items-center md:self-start p-2 md:mr-6">
         <span class="text-lg  text-zinc-400">Manager</span>
@@ -251,49 +251,57 @@ watch(() => filters.timeFilter,
     </section>
     <div class="flex flex-col mt-4">
       <div class="flex flex-row justify-left p-2 w-full bg-gradient-to-tl from-blue-50  via-white to-slate-50  items-center">
-        <img @click="toggleFilters = !toggleFilters" class="w-5 h-5 object-contain cursor-pointer" src="@/assets/filter-6536.svg" alt="">
-        <section v-if="toggleFilters" class="flex  justify-left ml-4 w-4/6">
+        <img
+          class="w-5 h-5 object-contain cursor-pointer"
+          src="@/assets/filter-6536.svg"
+          alt=""
+          @click="toggleFilters = !toggleFilters"
+        >
+        <section
+          v-if="toggleFilters"
+          class="flex  justify-left ml-4 w-4/6"
+        >
           <TDropdown
-              class="mr-4"
+            class="mr-4"
           >
             <template #header="{onClick}">
               <button
-                  class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
-                  @click="onClick"
+                class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
+                @click="onClick"
               >
                 Time
               </button>
             </template>
             <template #options>
               <div
-                  v-for="option in timeFilterOptions"
-                  :key="option.title + option.type"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  @click.prevent="changeFilterType(option, 'time')"
+                v-for="option in timeFilterOptions"
+                :key="option.title + option.type"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                @click.prevent="changeFilterType(option, 'time')"
               >
                 <small>{{ option.title }}</small>
               </div>
             </template>
           </TDropdown>
           <TDropdown>
-              <template #header="{onClick}">
-                <button
-                    class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
-                    @click="onClick"
-                >
-                  Status
-                </button>
-              </template>
-              <template #options>
-                <div
-                    v-for="option in statusFilterOptions"
-                    :key="option.title + option.type"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    @click.prevent="changeFilterType(option, 'status')"
-                >
-                  <small>{{ option.title }}</small>
-                </div>
-              </template>
+            <template #header="{onClick}">
+              <button
+                class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
+                @click="onClick"
+              >
+                Status
+              </button>
+            </template>
+            <template #options>
+              <div
+                v-for="option in statusFilterOptions"
+                :key="option.title + option.type"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                @click.prevent="changeFilterType(option, 'status')"
+              >
+                <small>{{ option.title }}</small>
+              </div>
+            </template>
           </TDropdown>
         </section>
       </div>
