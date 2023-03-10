@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import {ref, watch} from 'vue'
-import {ThrowFirebaseErrors, ThrowAuthErrors } from '../../models/index'
+import {ThrowFirebaseErrors, ThrowAuthErrors } from '../../helpers/index'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 const router = useRoute()

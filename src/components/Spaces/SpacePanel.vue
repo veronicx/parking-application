@@ -6,7 +6,7 @@ import moment from 'moment'
 import OrdersListing from './OrdersListing.vue'
 import AnalyticChart from './AnalyticChart.vue';
 import TDropdown from "@/components/TDropdown.vue";
-import { generateLabels} from '../../models/chart'
+import { generateLabels} from '../../helpers/chart'
 import Spinner from '../Spinner.vue';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';

@@ -1,6 +1,6 @@
 <script setup>
 import { Chart, Line } from 'vue-chartjs'
-import { options } from '../../models/chart'
+import { options } from '../../helpers/chart'
 import {
   Chart as ChartJS,
   CategoryScale,
