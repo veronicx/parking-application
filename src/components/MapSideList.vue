@@ -63,7 +63,7 @@ const moveMap = (location) => {
             </h4>
           </div>
           <div class="flex flex-row justify-between p-2">
-            <button class="rounded-lg border border-blue-400 text-blue-400 px-2 hover:border-blue-600 hover:text-blue-600">
+            <button @click="redirectMe(location)" class="rounded-lg border border-blue-400 text-blue-400 px-2 hover:border-blue-600 hover:text-blue-600">
               Order
             </button>
             <div class="mr-4">
