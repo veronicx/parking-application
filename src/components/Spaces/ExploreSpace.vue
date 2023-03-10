@@ -1,6 +1,6 @@
 <script setup>
 import { listingStore } from '../../stores/index';
-import { validateInput } from '../../models/validations';
+import { validateInput } from '../../helpers/validations';
 import { onMounted, ref, defineProps, onBeforeUnmount, computed } from 'vue'
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
