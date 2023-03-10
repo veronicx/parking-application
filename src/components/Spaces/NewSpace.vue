@@ -112,6 +112,9 @@ async function getAddressFromCoords() {
         const data = await response.json();
         if (data.features.length > 0) {
           newSpace.value.location.locationName = data.features[0].place_name;
+          newSpace.value.location.shortCode = data.features[0].context[data.features[0].context.length - 1]['short_code']
+          newSpace.value.location.country = data.features[0].context[data.features[0].context.length - 1].text
+          newSpace.value.location.city = data.features[0].context[1].text
         } else {
            newSpace.value.location.locationName = 'No address found';
         }
