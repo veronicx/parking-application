@@ -31,7 +31,7 @@ const app = createApp(App)
 //   connection: 'ws://localhost:8080'
 // }))
 
-app.component('font-awesome-icon', FontAwesomeIcon)
+app.component('FontAwesomeIcon', FontAwesomeIcon)
 // GOOGLE MAPS
 
 app.use(createPinia())

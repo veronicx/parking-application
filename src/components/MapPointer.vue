@@ -9,6 +9,7 @@ const props = defineProps({
   map: {
     type: Map,
     required: true,
+    default: () => {},
   },
   pointer: {
     type: Object,
@@ -16,31 +17,23 @@ const props = defineProps({
   },
   reference: {
     type: String,
-    required: true,
+    required: false
   },
   clear: {
     type: Array,
-    required: true
+    required: false
   }
 })
-const allMarkers = ref(props.clear)
-let marker = Marker
-const type = pointerType(props.markerType)
-const elm = ref({})
 
-watch(allMarkers.value, (newVal, oldVal) => {
-      const found  = newVal.find(item =>  item.location.lng === props.pointer?.location.lng && item.location.lat === props.pointer?.location.lat)
-      if(found && false) {
-          props.map.removeLayer(marker)
-      }
-}, { immediate: true, deep: true, flush: "pre"})
+const  marker = ref(Marker)
+
 
 const initializePointer = () => {
 
   let element = document.getElementById(props.reference)
     element.className = 'w-8 h-8'
-    marker = new Marker(element).setLngLat([props.pointer?.location?.lng,props?.pointer.location?.lat])
-    marker.addTo(props.map)
+    marker.value = new Marker(element).setLngLat([props.pointer?.location?.lng,props?.pointer.location?.lat])
+    marker.value.addTo(props.map)
 }
 
 onMounted(() => {
@@ -65,7 +58,6 @@ const goToPointer = () => {
 
 <template>
   <div
-    v-if="allMarkers.find(item => item.location.lng === pointer?.location.lng && item.location.lat === pointer?.location.lat)"
     :id="reference"
     class="hidden"
   >
@@ -86,6 +78,5 @@ const goToPointer = () => {
       </div>
     </div>
   </div>
-  <div v-else></div>
 </template>
 

@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeMount, onMounted, onUnmounted, ref, reactive} from 'vue';
+import {onBeforeMount, onMounted, onUnmounted, ref, reactive, defineEmits, onBeforeUnmount} from 'vue';
 import mapboxgl from 'mapbox-gl'
 import { Marker } from "mapbox-gl";
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -7,50 +7,64 @@ import { checkZoomLevel } from "@/helpers/map";
 
 const emits = defineEmits(['zoom'])
 
+const mapContainer = ref(null);
 const props = defineProps({
     markers: {
         type: Array,
         required: false,
       default: () => [],
     },
-    markerOptions: {
-        type: Boolean,
-        required: true,
-        default: true
-    }
+  geocoder: {
+      type: Boolean,
+      required: false,
+    default: true,
+  }
 })
 
 const geocoder = ref(MapboxGeocoder)
-let map = mapboxgl.Map
+let map = mapboxgl
 const zoomLevel = ref(7)
 const addMarker = ref(false)
+const sideListing = ref(false)
+const pointers = ref(false)
 const geolocation = reactive({
   latitude: 42.,
   longitude: 21,
 })
 
 const initMap = () => {
+  mapboxgl.accessToken = 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh1Z2hwMGFxYjN2cW04a2VzZG45ayJ9.NPMzgIBJyThmJnPcwtBL6Q'
         map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=qxYJYciqhDs6S1mBLLEZ', // style URL qxYJYciqhDs6S1mBLLEZ
+    container: 'map',
+    style: 'mapbox://styles/veroni88/clf4ajgp6008401pedjivmubf',
     center: [geolocation.longitude,geolocation.latitude],
     zoom: 7,
     minZoom: 5,
-    accessToken: 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh2dmc4MGl5bzN3bXRsNGRmbDVqOCJ9.egn7CgNwwq8bmEtE1pkXyw'
+    accessToken: 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh1Z2hwMGFxYjN2cW04a2VzZG45ayJ9.NPMzgIBJyThmJnPcwtBL6Q'
         });
-    initializeGeodecoders()
+    if(props.geocoder) {
+      initializeGeodecoders()
+    }
 
-    map.on('contextmenu', (e) => {
-        if (addMarker.value) {
-            createPointer(e)
-            addMarker.value = false
-            }
-        })
+
+    map.on('load', (e) => {
+        console.log('e', e)
+        pointers.value = true
+        sideListing.value = true
+      setInterval(() => {
+        const currentLevel = map.getZoom()
+        if(checkZoomLevel(zoomLevel.value,currentLevel)) {
+          console.log('asd')
+          zoomLevel.value = currentLevel
+          emits('zoom', zoomLevel.value)
+        }
+      }, 1200)
+    })
 }
 
 const initializeGeodecoders = () => {
     geocoder.value = new MapboxGeocoder({
-        accessToken: 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh2dmc4MGl5bzN3bXRsNGRmbDVqOCJ9.egn7CgNwwq8bmEtE1pkXyw',
+        accessToken: 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh1Z2hwMGFxYjN2cW04a2VzZG45ayJ9.NPMzgIBJyThmJnPcwtBL6Q',
         mapboxgl: mapboxgl
     });
 
@@ -67,56 +81,34 @@ const errorCallback = (error) => {
   console.log(error);
 };
 
-
 onMounted(() => {
   navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
     initMap()
-
-    setInterval(() => {
-      const currentLevel = map.getZoom()
-        if(checkZoomLevel(zoomLevel.value,currentLevel)) {
-          zoomLevel.value = currentLevel
-          emits('zoom', zoomLevel.value)
-        }
-    }, 1200)
 })
 
-
-onUnmounted(() => {
-    map.remove()
+onBeforeUnmount(() => {
+  console.log('hook')
+  map.remove()
 })
-
-
-const triggerMe = () => {
-  console.log('tickel')
-}
-
-
- /*
-                                                                  NOTES
-  // Added Interval Instead of Watcher as Watcher, Because needed to cross-reference the map which would be a huge memory leak
-  // This was done for two reasons, the reference was hurting the memory optimization of the application, and second map.getZoom() which is a function cannot be referenced properly
-  // This solutiom proved to be the better choice regarding my reasoning
-  */
-
-
 </script>
 
 
 <template>
   <div
     class="flex flex-row"
-    @scroll="triggerMe"
   >
     <slot
+      v-if="sideListing"
       name="sidelist"
       :map="map"
     />
     <div
       id="map"
+      ref="mapContainer"
       class="map__gl"
     />
     <slot
+      v-if="pointers"
       name="pointers"
       :map="map"
     />
@@ -125,14 +117,17 @@ const triggerMe = () => {
 
 <style>
 .map__gl {
-    width: 100%;
-    height: 100%;
+    min-width: 200px;
+    min-height: 200px;
     border-radius: 5px;
+  width: 100%;
+  height: 100%;
 }
 #map-pointer {
     width: 50px;
     height: 50px;
 }
+
 
 .mapboxgl-ctrl-geocoder {
   border: 2px solid white;
@@ -146,9 +141,7 @@ const triggerMe = () => {
   background-color: #FFFF !important;
 }
 
-.mapboxgl-ctrl-geocoder::placeholder  {
-  color: red !important;
-}
+
 
 .mapboxgl-ctrl-geocoder--input {
   border: 1px solid lightgray;
@@ -164,7 +157,6 @@ const triggerMe = () => {
 }
 
 .suggestions-wrapper {
-  border: 2px solid red;
   display: block !important;
   position: absolute !important;
   bottom: -13.8rem !important;

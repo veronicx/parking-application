@@ -9,7 +9,7 @@ const listing = ref([])
 const sideList = ref([])
 const loading = ref(false)
 const removeMarkers = ref(false)
-const currentZoomLevel= ref(7)
+let currentZoomLevel= ref(7)
 onMounted(async () => {
      listing.value = await fetchMarkers(currentZoomLevel.value)
       sideList.value = await fetchMarkers(11)
@@ -33,12 +33,11 @@ watch(() => currentZoomLevel.value , async(newVal,oldVal) => {
 </script>
 
 <template>
-  <div class="flex flex-col  h-100">
+  <div class="flex flex-col h-full">
     <div
-      class="flex flex-row justify-between h-full w-full p-2"
+      class="flex flex-row justify-between h-full w-full p-2 border-2 h-full"
     >
       <MapEmbed
-        :marker-options="false"
         class="h-full w-full"
         @zoom="(e) => currentZoomLevel = e"
       >

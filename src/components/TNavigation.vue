@@ -6,24 +6,24 @@ import { signOut, getAuth } from 'firebase/auth'
 const router = useRouter()
 const optionVal = ref('')
 
-const toggleDropdown = ref('hidden')
+let toggleDropdown = ref('hidden')
 
-const handleSignOut = () => {  
-    signOut(getAuth()).then(() => { 
+const handleSignOut = () => {
+    signOut(getAuth()).then(() => {
         router.push("/")
     })
 }
 
 watch(optionVal, (newVal, _oldVal) => {
-    if (newVal === '/auth/signout') { 
-        handleSignOut() 
-        
+    if (newVal === '/auth/signout') {
+        handleSignOut()
+
     }
         if(newVal !== _oldVal) { router.push(newVal) }
 })
 
 defineProps({
-    auth: { 
+    auth: {
         type: Object,
         required: true,
     }
@@ -40,7 +40,7 @@ defineProps({
     <div class="flex flex-col sm:flex-row items-center justify-between w-full sm:w-1/3">
       <span class="uppercase text-2xl flex flex-row justify-between w-full items-center sm:block sm:w-fit">
         Parklace
-        <span 
+        <span
           class="uppercase text-xl sm:hidden ml-4 hover:text-red-500"
         >
           <img
@@ -82,7 +82,7 @@ defineProps({
         <span
           class="m-4"
           @click="router.push('/explore')"
-        >Explore</span> 
+        >Explore</span>
       </div>
     </div>
     <div

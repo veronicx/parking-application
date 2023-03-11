@@ -10,8 +10,8 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
-    { 
-      path: '/explore', 
+    {
+      path: '/explore',
       name: 'Explore',
       component: () => import('../views/Listing.vue')
     },
@@ -24,7 +24,7 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: () => import('../views/User.vue'),
-      meta: { 
+      meta: {
         requiresAuth: true
       }
     },
@@ -32,20 +32,20 @@ const router = createRouter({
       path: '/spaces',
       name: 'spaces',
       component: () => import('../views/Spaces.vue'),
-      meta: { 
+      meta: {
         requiresAuth: true
       }
     },
     {
       path: '/space/current/:id',
-      name: 'User Space', 
-      component: () => import('../components/Spaces/ExploreSpace.vue')
+      name: 'User Space',
+      component: () => import('../components/Spaces/OrderSpace.vue')
     },
     {
-      path: '/space/new', 
+      path: '/space/new',
       name: 'new spaces',
       component: () => import('../components/Spaces/NewSpace.vue'),
-      meta: { 
+      meta: {
         requiresAuth: true
       }
   },
@@ -73,15 +73,15 @@ const getCurrentUser = () => {
 
 router.beforeEach(async (to, from, next) => {
   localStorage.setItem('PREV_ROUTE', from.fullPath)
-  if (to.meta.requiresAuth) { 
-    if (await getCurrentUser()) { 
+  if (to.meta.requiresAuth) {
+    if (await getCurrentUser()) {
       next()
     }
-    else { 
+    else {
       localStorage.setItem('PREV_ROUTE', to.fullPath)
       next({path: '/auth/login'})
     }
-  } else { 
+  } else {
     next()
   }
 
