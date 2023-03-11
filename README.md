@@ -1,13 +1,5 @@
-# PARKING APPLICATION
+# Parklace. A parking application using firebase,pinia,express and vue 3. The main of the project was just to toy with existing technologies which i am familiar such as vue 3,firebase,pinia and monogDB, however originally the project was intended to be with redis however i had some issues with it so i had to go back to mongoDB.
 
-#USING  VITE + VUE 3 + TAILWIND CSS
-
-
- # PARKLACE FRONT END WITH VUE 3 AND VITE 4 
- 
- // NPM I 
- 
- // NPM RUN DEV
+The project is not very concerned on the UI Part,as that is something I'm going to work on when i make the modeling a bit better, least to say some of the code i wrote is bad, some are really bad, However considering the amount of hours i put into it. I'm looking forward to improve it.
 
 
-// I am not focusing on the front-end part about UI till i nail the modeling on the back-end for the plate integrations :D
