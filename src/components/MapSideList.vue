@@ -1,6 +1,9 @@
 <script setup>
 import { Map } from 'mapbox-gl'
 import { googleRoute } from "@/helpers/map";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const props = defineProps({
   locations: {
@@ -20,6 +23,13 @@ const moveMap = (location) => {
     zoom: 11,
   })
 }
+
+const redirectMe = (location) => {
+  console.log(location)
+    router.push(`/space/current/${location._id}`)
+}
+
+
 </script>
 
 <template>
