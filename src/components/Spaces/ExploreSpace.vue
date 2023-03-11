@@ -174,54 +174,39 @@ const submitOrder = async () => {
 </script>
 
 <template>
-  <form class="bg-white rounded-lg shadow-md p-8 max-w-md w-full mx-auto">
-    <h2 class="text-xl font-bold mb-4">Book a Parking Space</h2>
-    <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="name">
-        Name
-      </label>
-      <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="John Doe">
+  <div class="bg-gray-50 px-4 py-8 sm:px-6 md:px-8 lg:px-10">
+    <div class="max-w-md mx-auto shadow-lg p-4 rounded-lg">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Parking Reservation</h2>
+      <form class="grid grid-cols-1 gap-6">
+        <div>
+          <label for="name" class="block text-gray-700 font-medium mb-2">Name</label>
+          <input type="text" id="name" name="name" placeholder="John Doe" class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+          <input type="email" id="email" name="email" placeholder="johndoe@example.com" class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="phone" class="block text-gray-700 font-medium mb-2">Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="(123) 456-7890" class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="license_plate" class="block text-gray-700 font-medium mb-2">License Plate</label>
+          <input type="text" id="license_plate" name="license_plate" placeholder="ABC123" class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="date_time" class="block text-gray-700 font-medium mb-2">Date & Time</label>
+          <input type="datetime-local" id="date_time" name="date_time" class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="duration" class="block text-gray-700 font-medium mb-2">Duration (hours)</label>
+          <input type="number" id="duration" name="duration" placeholder="2" min="1" max="24" class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div class="flex justify-center flex-wrap items-center sm:flex-row">
+          <button type="button" class="bg-gray-300 m-2 w-fit  text-gray-700 rounded-md px-4 py-2 mr-2 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Cancel</button>
+          <button type="submit" class="bg-gray-300 m-2 w-fit text-gray-700 rounded-md px-4 py-2 mr-2 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Submit</button>
+        </div>
+      </form>
     </div>
-    <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="email">
-        Email
-      </label>
-      <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="john.doe@example.com">
-    </div>
-    <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="phone">
-        Phone
-      </label>
-      <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phone" type="tel" placeholder="(123) 456-7890">
-    </div>
-    <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="date">
-        Date
-      </label>
-      <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="date" type="date">
-    </div>
-    <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="time">
-        Time
-      </label>
-      <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="time" type="time">
-    </div>
-    <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="duration">
-        Duration
-      </label>
-      <select class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="duration">
-        <option value="1">1 hour</option>
-        <option value="2">2 hours</option>
-        <option value="3">3 hours</option>
-        <option value="4">4 hours</option>
-        <option value="5">5 hours</option>
-      </select>
-    </div>
-    <div class="mb-4">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-        Book Now
-      </button>
-    </div>
-  </form>
+  </div>
 </template>
