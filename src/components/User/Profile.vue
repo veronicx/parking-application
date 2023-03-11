@@ -2,7 +2,9 @@
 </script>
 
 <template>
-    <div>
-        <button @click="clickMe"> HELLO</button>
-    </div>
+  <div>
+    <button @click="clickMe">
+      HELLO
+    </button>
+  </div>
 </template>

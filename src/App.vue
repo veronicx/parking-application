@@ -31,7 +31,7 @@ onMounted(() => {
 <template>
   <main class="bg-slate-50 text-slate-900 flex flex-col">
     <TNavigation :auth="auth" />
-    <RouterView style="height: 100vh;" :auth="auth" />
+    <RouterView :auth="auth" class="h-screen" />
   </main>
 </template>
 

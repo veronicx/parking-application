@@ -24,16 +24,30 @@ const generateSpacePanel = (id) => {
 
 </script>
 <template>
-    <div v-if="auth.uid">
-        <Layout>
-        <div v-if="spaces && spaces.length > 0" class="flex flex-row flex-wrap justify-center">
-            <div v-for="(space,index) in spaces" @click="generateSpacePanel(space._id)" :key="space._id + index" class="bg-slate-200 shadow-md m-4 flex flex-col justify-center text-center w-1/6">
-                <h2 class="text-2xl mb-2 mt-4">{{ space.title }} {{ space._id }}</h2>
-                    <h3 class="text-lg mb-2">{{ space.amount }} Parking Spaces</h3>
-            </div>
+  <div v-if="auth.uid">
+    <Layout>
+      <div
+        v-if="spaces && spaces.length > 0"
+        class="flex flex-row flex-wrap justify-center"
+      >
+        <div
+          v-for="(space,index) in spaces"
+          :key="space._id + index"
+          class="bg-slate-200 shadow-md m-4 flex flex-col justify-center text-center w-1/6"
+          @click="generateSpacePanel(space._id)"
+        >
+          <h2 class="text-2xl mb-2 mt-4">
+            {{ space.title }} {{ space._id }}
+          </h2>
+          <h3 class="text-lg mb-2">
+            {{ space.amount }} Parking Spaces
+          </h3>
         </div>
-            <button @click="router.push('/space/new')">New Space</button>
-        </Layout>
-    </div>
-     <span v-else>You have no access to this page.</span>
+      </div>
+      <button @click="router.push('/space/new')">
+        New Space
+      </button>
+    </Layout>
+  </div>
+  <span v-else>You have no access to this page.</span>
 </template>

@@ -11,7 +11,6 @@ const props = defineProps({
     required: true,
   },
   map: {
-    type: Map,
     required: true
   }
 })
@@ -41,8 +40,8 @@ const redirectMe = (location) => {
       <div
         v-for="location in locations"
         :key="location"
-        @click="moveMap(location)"
         class="mb-4 border-2 border-slate-100 rounded-lg mr-2 flex flex-col   shadow-sm hover:shadow-md hover:shadow-blue-200"
+        @click="moveMap(location)"
       >
         <div class="flex flex-col">
           <div
@@ -73,7 +72,10 @@ const redirectMe = (location) => {
             </h4>
           </div>
           <div class="flex flex-row justify-between p-2">
-            <button @click="redirectMe(location)" class="rounded-lg border border-blue-400 text-blue-400 px-2 hover:border-blue-600 hover:text-blue-600">
+            <button
+              class="rounded-lg border border-blue-400 text-blue-400 px-2 hover:border-blue-600 hover:text-blue-600"
+              @click.self="redirectMe(location)"
+            >
               Order
             </button>
             <div class="mr-4">

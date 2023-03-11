@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import {onBeforeUnmount, onMounted, ref} from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { Marker } from "mapbox-gl";
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -181,6 +181,9 @@ const removePricePoint = ref((id) => {
 
 })
 
+onBeforeUnmount(() => {
+  map.value.remove()
+})
 </script>
 
 <template>
