@@ -91,7 +91,7 @@ defineProps({
     >
       <img
         class="w-8 h-8 border-2 absolute rounded-full  m-auto"
-        src="../assets/avatar2.png"
+        :src="auth.photoURL"
       >
       <select
         id="select"

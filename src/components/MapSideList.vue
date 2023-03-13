@@ -24,7 +24,6 @@ const moveMap = (location) => {
 }
 
 const redirectMe = (location) => {
-  console.log(location)
     router.push(`/space/current/${location._id}`)
 }
 

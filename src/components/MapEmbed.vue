@@ -5,7 +5,7 @@ import { Marker } from "mapbox-gl";
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import { checkZoomLevel } from "@/helpers/map";
 
-const emits = defineEmits(['zoom'])
+const emits = defineEmits(['zoom', 'pointer'])
 
 const mapContainer = ref(null);
 const props = defineProps({
@@ -18,6 +18,11 @@ const props = defineProps({
       type: Boolean,
       required: false,
     default: true,
+  },
+  addPointer: {
+      type: Boolean,
+      required: true,
+      default: false,
   }
 })
 
@@ -38,8 +43,8 @@ const initMap = () => {
     container: 'map',
     style: 'mapbox://styles/veroni88/clf4ajgp6008401pedjivmubf',
     center: [geolocation.longitude,geolocation.latitude],
-    zoom: 7,
-    minZoom: 5,
+    zoom: 8,
+    minZoom: 7.5,
     accessToken: 'pk.eyJ1IjoidmVyb25pODgiLCJhIjoiY2xjamh1Z2hwMGFxYjN2cW04a2VzZG45ayJ9.NPMzgIBJyThmJnPcwtBL6Q'
         });
     if(props.geocoder) {
@@ -54,12 +59,17 @@ const initMap = () => {
       setInterval(() => {
         const currentLevel = map.getZoom()
         if(checkZoomLevel(zoomLevel.value,currentLevel)) {
-          console.log('asd')
           zoomLevel.value = currentLevel
           emits('zoom', zoomLevel.value)
         }
       }, 1200)
     })
+    if(props.addPointer) {
+      map.on('dblclick', (e) => {
+        emits('pointer', {lng: e.lngLat.lng, lat: e.lngLat.lat})
+      })
+    }
+
 }
 
 const initializeGeodecoders = () => {
@@ -87,7 +97,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  console.log('hook')
   map.remove()
 })
 </script>
@@ -105,7 +114,7 @@ onBeforeUnmount(() => {
     <div
       id="map"
       ref="mapContainer"
-      class="map__gl"
+      class="min-h-screen min-w-full"
     />
     <slot
       v-if="pointers"
@@ -117,8 +126,8 @@ onBeforeUnmount(() => {
 
 <style>
 .map__gl {
-    min-width: 200px;
-    min-height: 200px;
+    min-width: 130px;
+    min-height: 130px;
     border-radius: 5px;
   width: 100%;
   height: 100%;
@@ -178,5 +187,9 @@ ul > li:hover { transition: .2s ease-in; color: black;}
   justify-content: flex-end;
   padding: 0;
   margin: 0;
+}
+
+.mapboxgl-ctrl-attrib {
+  display: none;
 }
 </style>
