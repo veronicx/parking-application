@@ -1,25 +1,29 @@
 <script setup>
 import moment from 'moment'
-import { onMounted, ref } from 'vue';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import Spinner from '../Spinner.vue'
 const scrollList = ref(null)
 const emits = defineEmits(['load-more'])
 
 const props = defineProps({
-    orders:{ 
+    orders:{
         type: Array,
         required: true,
     }
 })
 
 
-onMounted(() => { 
+onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 
 const handleScroll = (evt) => {
   let element = scrollList.value
-    if(element.getBoundingClientRect().bottom < window.innerHeight + 40) { 
+    if(element.getBoundingClientRect().bottom < window.innerHeight + 40) {
        emits('load-more')
     }
 }

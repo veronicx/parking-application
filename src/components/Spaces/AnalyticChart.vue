@@ -37,17 +37,6 @@ defineProps({
   }
 })
 
-const datas =  {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [
-    {
-      label: 'Data One',
-      color: '#60a5fa',
-      backgroundColor: '#60a5fa',
-      data: [40, 39, 10, 40, 39, 80, 40]
-    }
-  ]
-}
 </script>
 
 <template>

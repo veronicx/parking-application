@@ -10,6 +10,7 @@ import { generateLabels} from '../../helpers/chart'
 import Spinner from '../Spinner.vue';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
+import Settings from "@/components/Spaces/Tabs/Settings.vue";
 
 
 const props = defineProps({
@@ -23,7 +24,7 @@ const props = defineProps({
 const route = useRoute()
 
 //Declarations
-const panel = ref(null)
+const panel = reactive({})
 const toggleFilters = ref(false)
 const disableInfiniteScrolling = ref(false)
 let chart = reactive({})
@@ -57,13 +58,12 @@ const filter = {
 }
 
 const fetchPanel = async () => {
-  await fetch(`${import.meta.env.VITE_PARKLACEAPI}/space/panel/${route.params.id}`)
+  await fetch(`${import.meta.env.VITE_PARKLACEAPI}/spaces/one/${route.params.id}`)
       .then(response => response.json())
-        .then(data =>  panel.value = data)
+        .then(data =>  panel.space = data)
 }
 
 const fetchChart = async () => {
-  // /order/chart/:id/:type
   await fetch(`${import.meta.env.VITE_PARKLACEAPI}/order/chart/${route.params.id}/${filters.timeFilter}`)
       .then(response => response.json())
           .then(data => {
@@ -71,7 +71,6 @@ const fetchChart = async () => {
           })
 }
 const fetchOrders = async() => {
-  // /order/listing/:id/:type/:offset?/:limit?/:start?/:end? //
   await fetch(`${import.meta.env.VITE_PARKLACEAPI}/order/listing/${route.params.id}/${filters.timeFilter}/${filters.offset}/${filters.limit}`)
       .then(response => response.json())
         .then(data => {
@@ -131,6 +130,10 @@ onMounted( async() => {
   }
 })
 
+watch(filters, (newVal) => {
+  generateChart()
+})
+
 const loadMore = async () => {
   if(!disableInfiniteScrolling.value) {
     filters.offset += 5
@@ -174,13 +177,8 @@ const generateProfitAnalytic = () => {
   return profit
 }
 
-const changeFilterType  = (option, type) =>  {
-  if(type === 'time') {
-    filters.timeFilter = option.title
-  }
-  if(type === 'status') {
-    filters.statusFilter = option.title
-  }
+const changeFilterType  = (option) =>  {
+    filters.timeFilter = option
 }
 
 const filteredOrders = ref(() => {
@@ -203,154 +201,181 @@ watch(() => filters.timeFilter,
     },
     { deep: true}
 )
+
+const tabs = ref(['analytics', 'admission', 'billing', 'settings'])
+const currentTab = ref('analytics')
+
+const checkTab = (tab) => {
+  currentTab.value = tab
+}
 </script>
 
 
 <template>
   <div
-    v-if="panel"
-    class="flex flex-col justify-center w-full"
+    v-if="panel.space"
+    class="flex flex-col justify-center w-full h-fit p-2"
   >
-    <h1>{{ chartData }} {{ labels }}</h1>
-    <section class="w-full bg-white shadow-sm flex flex-col md:flex-row items-center justify-between self-start p-4">
-      <div class="w-3/6 lg:w-fit bg-white h-fit flex flex-col  md:items-center md:self-start p-2 md:mr-6">
-        <span class="text-lg  text-zinc-400">Manager</span>
-        <div class="flex flex-row items-center">
-          <img
-            src="../../assets/avatar2.png"
-            class="w-12 h-12 rounded-full"
-            alt=""
-          >
-          <span class="text-sm">{{ panel.space[0].createdBy.email || panel.space[0].createdBy.displayName }}</span>
+    <div class="h-fit flex flex-row">
+      <div
+        v-for="(tab,idx) in tabs"
+        :key="tab + idx"
+        class="mr-2"
+      >
+        <button
+          class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4"
+          :class="currentTab === tab ? 'text-blue-600' : 'text-slate-400'"
+          @click="checkTab(tab)"
+        >
+          {{ tab }}
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="currentTab === 'analytics'"
+      class="flex flex-col justify-center"
+    >
+      <section
+        v-if="panel.space.premiumFeatures.analytics"
+        class="w-full bg-white shadow-sm flex flex-col md:flex-row items-center justify-between self-start p-4"
+      >
+        <div class="w-3/6 lg:w-fit bg-white h-fit flex flex-col  md:items-center md:self-start p-2 md:mr-6">
+          <span class="text-lg  text-zinc-400">Manager</span>
+          <div class="flex flex-row items-center">
+            <img
+              :src="auth.photoURL"
+              class="w-12 h-12 rounded-full mr-4"
+              alt=""
+            >
+            <span class="text-sm">{{ panel.space.createdBy.email || panel.space.createdBy.displayName }}</span>
+          </div>
         </div>
-      </div>
-      <div class="w-3/6 md:w-auto flex flex-col md:mr-6">
-        <span class="text-lg  text-zinc-400">Space Title</span>
-        <p class="text-sm">
-          {{ panel.space[0].title }}
-        </p>
-      </div>
-      <div class="w-3/6 md:w-auto flex flex-col md:mr-6">
-        <span class="text-lg  text-zinc-400">Space Amount</span>
-        <p class="text-sm">
-          {{ panel.space[0].amount }}
-        </p>
-      </div>
-      <div class="w-3/6 md:w-auto flex flex-col md:mr-6">
-        <span class="text-lg  text-zinc-400">Space Created</span>
-        <p class="text-sm">
-          {{ formatTime(panel.space[0].createdAt) }}
-        </p>
-      </div>
-      <div class="w-3/6 md:w-auto flex flex-col">
-        <span class="text-lg  text-zinc-400">Space Location</span>
-        <p class="text-sm break-words">
-          {{ panel.space[0].location.locationName }}
-        </p>
-      </div>
-    </section>
-    <div class="flex flex-col mt-4">
-      <div class="flex flex-row justify-left p-2 w-full bg-gradient-to-tl from-blue-50  via-white to-slate-50  items-center">
-        <img
-          class="w-5 h-5 object-contain cursor-pointer"
-          src="@/assets/filter-6536.svg"
-          alt=""
-          @click="toggleFilters = !toggleFilters"
-        >
-        <section
-          v-if="toggleFilters"
-          class="flex  justify-left ml-4 w-4/6"
-        >
-          <TDropdown
-            class="mr-4"
-          >
-            <template #header="{onClick}">
-              <button
-                class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
-                @click="onClick"
-              >
-                Time
-              </button>
-            </template>
-            <template #options>
-              <div
-                v-for="option in timeFilterOptions"
-                :key="option.title + option.type"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                @click.prevent="changeFilterType(option, 'time')"
-              >
-                <small>{{ option.title }}</small>
-              </div>
-            </template>
-          </TDropdown>
-          <TDropdown>
-            <template #header="{onClick}">
-              <button
-                class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
-                @click="onClick"
-              >
-                Status
-              </button>
-            </template>
-            <template #options>
-              <div
-                v-for="option in statusFilterOptions"
-                :key="option.title + option.type"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                @click.prevent="changeFilterType(option, 'status')"
-              >
-                <small>{{ option.title }}</small>
-              </div>
-            </template>
-          </TDropdown>
-        </section>
-      </div>
-      <section class=" bg-white flex items-stretch flex-col md:flex-row mb-8 p-4">
-        <AnalyticChart
-          v-if="chart && chart.labels"
-          :collection="chart"
-          class="w-full md:w-4/5 bg-gradient-to-tl from-slate-100  via-white to-gray-100 "
-        />
-        <div class="md:ml-2 w-full md:w-2/6 flex flex-row flex-wrap items-center md:flex-col bg-zinc-50">
-          <div class="md:mb-4 w-3/6 shadow-blue-100 shadow-sm flex flex-col items-center hover:shadow-blue-400 md:w-5/6 text-center">
-            <font-awesome-icon
-              class="bg-slate-900 h-6 w-6 p-2 mt-2 text-zinc-50 rounded-full"
-              icon="fa-solid fa-users-viewfinder"
-            />
-            <small class="text-zinc-400 text-lg">Views</small>
-            <h3 class="font-bold text-2xl text-zinc-900 text-center font-sans">
-              {{ analytics.length }}
-            </h3>
-          </div>
-          <div class="md:mb-4 w-3/6 shadow-blue-100 shadow-sm flex flex-col items-center hover:shadow-blue-400 md:w-5/6 text-center">
-            <font-awesome-icon
-              class="bg-blue-400 h-6 w-6 p-2 mt-2 text-zinc-50 rounded-full"
-              icon="fa-solid fa-car-on"
-            />
-            <small class="text-zinc-400 text-lg">Orders</small>
-            <h3 class="font-bold text-2xl text-zinc-900 text-center font-sans">
-              {{ filteredOrders() }}
-            </h3>
-          </div>
-          <div class="w-3/6 shadow-blue-100 shadow-sm flex flex-col items-center hover:shadow-blue-400 md:w-5/6 text-center">
-            <font-awesome-icon
-              icon="fa-solid fa-money-bills"
-              class="bg-green-400 h-6 w-6 p-2 mt-2 text-zinc-50 rounded-full"
-            />
-            <small class="text-zinc-400 text-lg">Profit</small>
-            <h3 class="font-bold text-xl text-zinc-900 text-center font-sans">
-              {{ generateProfitAnalytic() }}€
-            </h3>
-          </div>
+        <div class="w-3/6 md:w-auto flex flex-col md:mr-6">
+          <span class="text-lg  text-zinc-400">Space Title</span>
+          <p class="text-sm">
+            {{ panel.space.title }}
+          </p>
+        </div>
+        <div class="w-3/6 md:w-auto flex flex-col md:mr-6">
+          <span class="text-lg  text-zinc-400">Space Amount</span>
+          <p class="text-sm">
+            {{ panel.space.amount }}
+          </p>
+        </div>
+        <div class="w-3/6 md:w-auto flex flex-col md:mr-6">
+          <span class="text-lg  text-zinc-400">Space Created</span>
+          <p class="text-sm">
+            {{ formatTime(panel.space.createdAt) }}
+          </p>
+        </div>
+        <div class="w-3/6 md:w-auto flex flex-col">
+          <span class="text-lg  text-zinc-400">Space Location</span>
+          <p class="text-sm break-words">
+            {{ panel.space.location.locationName }}
+          </p>
         </div>
       </section>
+      <div
+        v-if="panel.space.premiumFeatures.analytics"
+        class="flex flex-col mt-4"
+      >
+        <div class="flex flex-row justify-left p-2 w-full bg-gradient-to-tl from-blue-50  via-white to-slate-50  items-center">
+          <img
+            class="w-5 h-5 object-contain cursor-pointer"
+            src="@/assets/filter-6536.svg"
+            alt=""
+            @click="toggleFilters = !toggleFilters"
+          >
+          <section
+            v-if="toggleFilters"
+            class="flex  justify-left ml-4 w-4/6"
+          >
+            <TDropdown
+              class="mr-4"
+            >
+              <template #header="{onClick}">
+                <button
+                  class="bg-blue-300 text-white w-16 text-slate-600 rounded-full text-xs p-1"
+                  @click="onClick"
+                >
+                  Time
+                </button>
+              </template>
+              <template #options>
+                <div
+                  v-for="option in timeFilterOptions"
+                  :key="option.title + option.type"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  @click.prevent="changeFilterType(option.title)"
+                >
+                  <small>{{ option.title }}</small>
+                </div>
+              </template>
+            </TDropdown>
+          </section>
+        </div>
+        <section class=" bg-white flex items-stretch flex-col md:flex-row mb-8 p-4">
+          <AnalyticChart
+            v-if="chart && chart.labels"
+            :collection="chart"
+            class="w-full md:w-4/5 bg-gradient-to-tl from-slate-100  via-white to-gray-100 "
+          />
+          <div class="md:ml-2 w-full md:w-2/6 flex flex-row flex-wrap items-center md:flex-col bg-zinc-50">
+            <div class="md:mb-4 w-3/6 shadow-blue-100 shadow-sm flex flex-col items-center hover:shadow-blue-400 md:w-5/6 text-center">
+              <font-awesome-icon
+                class="bg-slate-900 h-6 w-6 p-2 mt-2 text-zinc-50 rounded-full"
+                icon="fa-solid fa-users-viewfinder"
+              />
+              <small class="text-zinc-400 text-lg">Views</small>
+              <h3 class="font-bold text-2xl text-zinc-900 text-center font-sans">
+                {{ analytics.length }}
+              </h3>
+            </div>
+            <div class="md:mb-4 w-3/6 shadow-blue-100 shadow-sm flex flex-col items-center hover:shadow-blue-400 md:w-5/6 text-center">
+              <font-awesome-icon
+                class="bg-blue-400 h-6 w-6 p-2 mt-2 text-zinc-50 rounded-full"
+                icon="fa-solid fa-car-on"
+              />
+              <small class="text-zinc-400 text-lg">Orders</small>
+              <h3 class="font-bold text-2xl text-zinc-900 text-center font-sans">
+                {{ filteredOrders() }}
+              </h3>
+            </div>
+            <div class="w-3/6 shadow-blue-100 shadow-sm flex flex-col items-center hover:shadow-blue-400 md:w-5/6 text-center">
+              <font-awesome-icon
+                icon="fa-solid fa-money-bills"
+                class="bg-green-400 h-6 w-6 p-2 mt-2 text-zinc-50 rounded-full"
+              />
+              <small class="text-zinc-400 text-lg">Profit</small>
+              <h3 class="font-bold text-xl text-zinc-900 text-center font-sans">
+                {{ generateProfitAnalytic() }}€
+              </h3>
+            </div>
+          </div>
+        </section>
+      </div>
+      <section v-if="orders && orders.length">
+        <OrdersListing
+          :orders="orders"
+          @load-more="loadMore()"
+        />
+      </section>
+      <section
+        v-else
+        class="mt-8 p-8 text-center bg-slate-200 rounded"
+      >
+        There's no orders currently
+      </section>
     </div>
-    <section>
-      <OrdersListing
-        :orders="orders"
-        @load-more="loadMore()"
-      />
-    </section>
+    <div v-else-if="currentTab === 'admission'">
+      <div>Admission</div>
+    </div>
+    <div v-else-if="currentTab === 'billing'">
+      <h1>hello</h1>
+    </div>
+    <div v-else>
+      <Settings :space="panel.space" />
+    </div>
   </div>
   <div v-else>
     <Spinner />

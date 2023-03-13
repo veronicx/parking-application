@@ -4,7 +4,7 @@ import { Map, Marker} from 'mapbox-gl'
 import Popup from '@/components/Popup.vue'
 import { pointerType } from "@/helpers/map";
 
-const emits = defineEmits(['zoom'])
+const emits = defineEmits(['zoom', 'clean'])
 const props = defineProps({
   map: {
     type: Map,
@@ -19,21 +19,22 @@ const props = defineProps({
     type: String,
     required: false
   },
-  clear: {
-    type: Array,
-    required: false
+  removable: {
+    type: Boolean,
+    required: false,
+    default: false,
   }
 })
 
-const  marker = ref(Marker)
+let  marker = Marker
 
 
 const initializePointer = () => {
 
   let element = document.getElementById(props.reference)
     element.className = 'w-8 h-8'
-    marker.value = new Marker(element).setLngLat([props.pointer?.location?.lng,props?.pointer.location?.lat])
-    marker.value.addTo(props.map)
+    marker = new Marker(element).setLngLat([props.pointer?.location?.lng,props?.pointer.location?.lat])
+    marker.addTo(props.map)
 }
 
 onMounted(() => {
@@ -54,12 +55,20 @@ const goToPointer = () => {
   })
 }
 
+const remove = (status) => {
+    if(status) {
+      marker.remove()
+      emits('clean')
+    }
+}
+
 </script>
 
 <template>
   <div
     :id="reference"
     class="hidden"
+    @contextmenu="remove(removable)"
   >
     <div
       class="cursor-pointer"

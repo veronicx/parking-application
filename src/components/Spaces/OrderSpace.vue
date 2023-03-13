@@ -1,7 +1,7 @@
 <script setup>
 import { validateInput } from '@/helpers/validations';
 import { fetchCurrentParkingSpace } from "@/helpers/api";
-import { onMounted, ref,  onBeforeUnmount, } from 'vue'
+import { onMounted, ref,  onBeforeUnmount, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import MapEmbed from "@/components/MapEmbed.vue";
 import moment from 'moment'
@@ -28,28 +28,6 @@ const order = ref({
   dateEnd: Date.now()
 })
 
-const errorObject = ref({
-    name: {
-        message: '',
-        checked: false,
-    },
-    lastName: {
-        message: '',
-        checked: false,
-    },
-    email: {
-        message: '',
-        checked: false,
-    },
-    phone: {
-        message: '',
-        checked: false,
-    },
-    order: {
-        message: '',
-        checked: false,
-    },
-})
 
 const collection = ref({
     viewed: Date.now(),
@@ -58,104 +36,90 @@ const collection = ref({
     ordered: false,
 })
 
-// const startAnalytics = () => {
-//         collection.value.viewed = Date.now()
-//         collection.value.viewedBy =  props.auth.uid ? props.auth.uid : {
-//         incognito: true,
-//         id: localStorage.getItem('sessionId'),
-//         }
-// }
+const startAnalytics = () => {
+        collection.value.viewed = Date.now()
+        collection.value.viewedBy =  props.auth.uid ? props.auth.uid : {
+        incognito: true,
+        id: localStorage.getItem('sessionId'),
+        }
+}
 
 
-// const calculateDuration = computed(() => {
-//
-//     const startDate = newOrder.value['order-duration'].startAt
-//     const endDate = newOrder.value['order-duration'].endAt
-//
-//   const dateFormat = 'HH:mm:ss DD-MM-YYYY';
-//   const start = moment(startDate, dateFormat);
-//   const end = moment(endDate, dateFormat);
-//   const duration = end.diff(start, 'minutes');
-//
-//   if (duration < 60) {
-//     return 1;
-//   }
-//
-//   const hours = duration / 60;
-//
-//   const roundedHours = Math.ceil(hours);
-//   return roundedHours;
-// })
-//
-// const checkout = (duration) => {
-//
-//     newOrder.value.price = duration / data.value.orderPricePoints[0].price
-//     if (duration >= 24) {
-//             return `${Math.floor(duration / 24)} Day`
-//     }
-//     else {
-//             return `${duration} Hours`
-//          }
-// }
+const  calculateTimeBetweenDates = computed(() => {
+  if(order.value.dateStart && order.value.dateEnd ) {
+    const start = new Date(order.value.dateStart)
+    const end = new Date(order.value.dateEnd)
+    const timeDiff = Math.abs(start - end);
+    const hours = timeDiff / 36e5; // 1 hour = 3,600,000 milliseconds = 36e5
+      if(hours <= 1) {
+        return 1 * data.value.orderPricePoints.hour
+      }
+      if(hours > 24) {
+        const daily = Math.floor(hours / 24)
+          return daily * data.value.orderPricePoints.day
+      }
+      if(hours >= 650) {
+        const monthly = Math.floor(hours / 730)
+          return monthly * data.value.orderPricePoints.month
+      }
+
+  }
+  return -1
+})
 
 
 
-// const handleInput = (key,value) => {
-//     const data = validateInput(key,value)
-//     if(data.key && data.message) {
-//         errorObject.value[key].message = data.message
-//     } else {
-//         errorObject.value[key].message = ''
-//         errorObject.value[key].checked = false
-//     }
-// }
+
 
 onMounted(async () => {
   await fetchCurrentParkingSpace(route.params.id).then ( response => data.value = response)
-    // if (data.value.premiumFeatures.analytics) {
-    //     startAnalytics()
-    // }
+    if (data.value.premiumFeatures.analytics) {
+        startAnalytics()
+    }
 
 })
-// onBeforeUnmount(async () => {
-//     collection.value.time = Math.abs(Date.now() - collection.value.viewed) / 1000
-//
-//     await fetch(`${import.meta.env.VITE_PARKLACEAPI}/analytics/view/add`,  {
-//         method: 'PUT',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({id: id.value, view:collection.value})
-//     })
-//         .then(response => response.json())
-//             .then(response => {})
-// })
+onBeforeUnmount(async () => {
+    collection.value.time = Math.abs(Date.now() - collection.value.viewed) / 1000
+
+    await fetch(`${import.meta.env.VITE_PARKLACEAPI}/analytics/view/add`,  {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id: props.auth.uid ? props.auth.uid : localStorage.getItem('sessionId'), view:collection.value})
+    })
+        .then(response => response.json())
+            .then(response => {})
+})
 
 const submitOrder = async () => {
+  const price = ref(calculateTimeBetweenDates)
     await fetch(`${import.meta.env.VITE_PARKLACEAPI}/order/new`,
         {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             'space-id': data.value._id,
+            'space-title': data.value.title,
             'person-id': props.auth.uid ? props.auth.uid : localStorage.getItem('sessionId'),
-            'person-name': newOrder.value.personName,
-            'person-email': newOrder.value.personEmail,
-            'person-phone': newOrder.value.personPhone,
+            'person-name': order.value.name,
+            'person-email': order.value.email,
+            'person-phone': order.value.phone,
             'order-duration': {
-                'startAt': moment(newOrder.value['order-duration'].startAt).toDate(),
-                'endAt': moment(newOrder.value['order-duration'].endAt).toDate(),
+                'startAt': moment(order.value.dateStart).toDate(),
+                'endAt': moment(order.value.dateEnd).toDate(),
                 'completed': false
             },
-            'order-price': newOrder.value.price,
-            'order-privilege': newOrder.value['order-privilege'],
+            'order-price': price.value,
+            'order-privilege': 'standard',
             'ordered-at': Date.now(),
-            'org': 'localhost:3000'
+            'license-plate': order.value.license,
+            'org': 'localhost:5173',
             })
         })
             .then(response => response.json())
                 .then(data => {
                     if(data) {
-                        modalToggler.value = true
-                        qrCode.value = data['qr-code']
+                        // modalToggler.value = true
+                        // qrCode.value = data['qr-code']
                         collection.value.ordered = true
                     }
                 })
@@ -187,7 +151,9 @@ const reviews = ref([
           Manager: {{ data.createdBy.email }} {{ data.createdBy.displayName }}
         </h2>
       </div>
-      <h2 class="text-gray-700 font-medium hover:text-blue-400 mb-2">Price per Hour: {{ data?.orderPricePoints[0] || '1$' }}</h2>
+      <h2 class="text-gray-700 font-medium hover:text-blue-400 mb-2">
+        Price per Hour: {{ data?.orderPricePoints[0] || '1$' }}
+      </h2>
       <div>
         <MapEmbed :geocoder="false">
           <template #pointers="{map}">
@@ -240,6 +206,7 @@ const reviews = ref([
               id="name"
               v-model="order.name"
               type="text"
+              required
               name="name"
               placeholder="John Doe"
               class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -254,6 +221,7 @@ const reviews = ref([
               id="email"
               v-model="order.email"
               type="email"
+              required
               name="email"
               placeholder="johndoe@example.com"
               class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -269,6 +237,7 @@ const reviews = ref([
               v-model="order.phone"
               type="tel"
               name="phone"
+              required
               placeholder="(123) 456-7890"
               class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -282,6 +251,7 @@ const reviews = ref([
               id="license_plate"
               v-model="order.license"
               type="text"
+              required
               name="license_plate"
               placeholder="ABC123"
               class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -296,6 +266,7 @@ const reviews = ref([
               id="date_time"
               v-model="order.dateStart"
               type="datetime-local"
+              required
               name="date_time"
               class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -310,9 +281,14 @@ const reviews = ref([
               v-model="order.dateEnd"
               type="datetime-local"
               name="date_time"
+              required
               class="bg-white border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
           </div>
+          <small
+            v-if="calculateTimeBetweenDates > 0"
+            class="bg-green-400 text-center rounded p-2"
+          >{{ calculateTimeBetweenDates }}</small>
           <div class="flex justify-center flex-wrap items-center sm:flex-row">
             <button
               type="button"
@@ -323,6 +299,7 @@ const reviews = ref([
             </button>
             <button
               type="submit"
+              @click.prevent="submitOrder"
               class="bg-gray-300 m-2 w-fit text-gray-700 rounded-md px-4 py-2 mr-2 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Submit

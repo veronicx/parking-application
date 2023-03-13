@@ -1,5 +1,10 @@
 <script setup>
-
+const props = defineProps({
+  auth: {
+    type: Object,
+    required: true,
+  }
+})
 import Profile from '../components/User/Profile.vue';
 
 
@@ -7,6 +12,6 @@ import Profile from '../components/User/Profile.vue';
 
 <template>
   <div class="flex flex-col items-center">
-    <Profile />
+    <Profile :auth="auth" />
   </div>
 </template>

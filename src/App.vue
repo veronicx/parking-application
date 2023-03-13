@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 import TNavigation from './components/TNavigation.vue'
 import Footer from './components/Footer.vue'
 
-import { getAuth, onAuthStateChanged,} from 'firebase/auth'
+import { getAuth, onAuthStateChanged} from 'firebase/auth'
 import { onMounted, ref } from 'vue'
 
 const generateUnRegisteredSession = () => {

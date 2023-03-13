@@ -11,8 +11,9 @@ const loading = ref(false)
 const removeMarkers = ref(false)
 let currentZoomLevel= ref(7)
 onMounted(async () => {
-     listing.value = await fetchMarkers(currentZoomLevel.value)
-      sideList.value = await fetchMarkers(11)
+  const localData = await fetchMarkers(11)
+     listing.value = localData
+      sideList.value = localData
 })
 
 const refetch = async (newZoomLevel) => {
@@ -23,22 +24,15 @@ const refetch = async (newZoomLevel) => {
         }
 }
 
-watch(() => currentZoomLevel.value , async(newVal,oldVal) => {
-     if(oldVal && newVal && checkZoomLevel(oldVal,newVal)) {
-       removeMarkers.value = checkZoomLevel(oldVal,newVal)
-       await refetch(newVal)
-     }
-}, { deep: true, immediate: true, flush: 'sync'})
-
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col h-full border-2">
     <div
-      class="flex flex-row justify-between h-full w-full p-2 border-2 h-full"
+      class="flex flex-row justify-between h-screen w-full p-2 border-2 h-full"
     >
       <MapEmbed
-        class="h-full w-full"
+        class="h-screen w-full"
         @zoom="(e) => currentZoomLevel = e"
       >
         <template #sidelist="{ map }">
